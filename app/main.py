@@ -6,8 +6,7 @@ from app.core.database import engine, Base
 from app.routers import health_router
 from app.schemas.common_schema import CommonResponse
 
-# DB 테이블 생성
-Base.metadata.create_all(bind=engine)
+
 
 # FastAPI 앱 생성
 app = FastAPI(
