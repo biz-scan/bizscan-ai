@@ -1,7 +1,5 @@
 from langchain_core.prompts import ChatPromptTemplate
 
-from langchain_core.prompts import ChatPromptTemplate
-
 def get_action_plan_prompt() -> ChatPromptTemplate:
     return ChatPromptTemplate.from_messages([
         ("system", """
@@ -45,10 +43,15 @@ def get_action_plan_prompt() -> ChatPromptTemplate:
         - 주 타겟: {target}
 
         2. 공공 데이터 및 트렌드
-        - 유동인구: {floating_pop}
-        - 경쟁 현황: {competition}
-        - 배후지 특성: {income_level}
-        - 지역 트렌드: {trends}
+        - 주 이용 연령대: {main_age_group}
+        - 주 이용 성별: {main_gender}
+        - 일 평균 유동인구: {avg_daily_pop}
+        - 피크 시간대: {peak_time}
+        - 동종 업계 점포 수: {competitor_count}
+        - 경쟁 강도: {competition_level}
+        - 월 평균 소득: {avg_mon_income}
+        - 주거 형태: {housing_type}
+        - 지역 트랜드: {trend_keyword}
 
         3. SWOT 분석 결과
         {swot_result}

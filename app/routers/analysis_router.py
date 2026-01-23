@@ -1,17 +1,17 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.schemas.store_schema import StoreAnalysisResponse
+from app.schemas.analysis_schema import AnalysisStoreResponse
 from app.schemas.common_schema import CommonResponse
 from app.core.database import get_db
-from app.services.store_service import swot_ap_analysis
+from app.services.analysis_service import swot_ap_analysis
 
 router = APIRouter(
-    prefix="/api/stores",
-    tags=["Store"],
+    prefix="/api/analysis",
+    tags=["Analysis"],
 )
 
-@router.get("/{store_id}/analysis")
+@router.get("/stores/{store_id}")
 async def analysis_store(
     store_id: int,
     db: Session = Depends(get_db),
