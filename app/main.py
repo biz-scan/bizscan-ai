@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 
 from app.core.database import engine, Base
 from app.routers import health_router
+from app.routers import catchphrase_router
 from app.schemas.common_schema import CommonResponse
 
 # DB 테이블 생성
@@ -27,6 +28,7 @@ app.add_middleware(
 
 # 라우터 등록
 app.include_router(health_router.router)
+app.include_router(catchphrase_router.router)
 
 # / -> /docs 리다이렉트
 @app.get("/")
