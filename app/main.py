@@ -1,11 +1,23 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
+import httpx
+from contextlib import asynccontextmanager
+from app.utils.client_manager import HttpClientManager
 
 from app.core.database import engine, Base
-from app.routers import health_router
+from app.routers import health_router, analysis_router
 from app.schemas.common_schema import CommonResponse
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # [Startup] 앱이 켜질 때 클라이언트 생성
+    await HttpClientManager.start()
+    
+    yield  # 앱이 실행되는 동안 유지
+    
+    # [Shutdown] 앱이 꺼질 때 클라이언트 종료
+    await HttpClientManager.stop()
 
 
 # FastAPI 앱 생성
@@ -13,6 +25,7 @@ app = FastAPI(
     title="Bizscan AI API",
     description="Bizscan AI API 입니다.",
     version="0.1.0",
+    lifespan=lifespan
 )
 
 # CORS 설정
@@ -26,6 +39,7 @@ app.add_middleware(
 
 # 라우터 등록
 app.include_router(health_router.router)
+app.include_router(analysis_router.router)
 
 # / -> /docs 리다이렉트
 @app.get("/")

@@ -1,53 +1,79 @@
 import json
 from langchain_core.prompts import ChatPromptTemplate
 
+from app.utils.prompt_formatting import format_example_for_prompt
+
 # 1. 후보 전략 선정 Chain
 def get_candidate_prompt() -> ChatPromptTemplate:
     # Few-shot Input (베이커리 예시)
     example_input = {
-        "strengths": [{"id": "S1", "keyword": "당일 생산 수제 빵의 품질"}],
-        "weaknesses": [{"id": "W1", "keyword": "온라인 홍보 부족"}],
-        "opportunities": [{"id": "O1", "keyword": "인근 지하철역 출근길 유동인구 풍부"}],
-        "threats": [{"id": "T1", "keyword": "대형 프랜차이즈 빵집 입점 예정"}]
+        "strengths": {
+            "type": "S",
+            "keyword": "가격 경쟁력 우수",
+            "description": "객단가가 주변보다 낮아요",
+            "diagnosis": "해당 업체는 가격 경쟁력이 우수합니다. 객단가가 주변보다 낮게 책정되어 있고, 소비자들에게 높은 가성비를 제공함으로써 인근 경쟁 업체 대비 신규 고객 유입 및 시장 점유율 확보에 매우 유리한 위치를 점하고 있습니다."
+        },
+        "weaknesses": {
+            "type": "W",
+            "keyword": "리뷰 수 부족",
+            "description": "경쟁사 대비 20% 수준",
+            "diagnosis": "현재 온라인상에 축적된 리뷰 수가 경쟁사 대비 20% 수준에 머물러 있어, 디지털 신뢰도가 매우 낮은 상태입니다. 이는 가격 경쟁력이라는 확실한 강점이 있음에도 불구하고, 실제 방문으로 이어지게 하는 '사회적 증거'가 부족하여 잠재 고객을 이탈시키는 주요 원인이 되고 있습니다."
+        },
+        "opportunities": {
+            "type": "O",
+            "keyword": "20대 유동인구 상승",
+            "description": "저녁 시간대 급증",
+            "diagnosis": "저녁 시간대를 중심으로 가성비를 중시하는 20대 유동인구가 급증하고 있는 점은 매출 성장의 강력한 기회 요인입니다. 이들의 활동 패턴에 맞춘 마케팅이나 메뉴 구성을 통해 유입을 유도한다면, 현재의 가격 경쟁력을 극대화하여 저녁 시간대 점유율을 빠르게 확대할 수 있습니다."
+        },
+        "threats": {
+            "type": "T",
+            "keyword": "유사 업종 과포화",
+            "description": "반경 500m 내 150개",
+            "diagnosis": "반경 500m 이내에 150개의 유사 업체가 밀집해 있는 과포화 상태는 시장 진입 장벽을 낮추고 출혈 경쟁을 야기하는 심각한 위협입니다. 단순한 가격 우위만으로는 차별화를 꾀하기 어려우며, 강력한 브랜드 인지도를 구축하지 못할 경우 치열한 점유율 싸움에서 도태될 위험이 큽니다."
+        }
     }
+
     # Few-shot Output
     example_output = [
         {
             "id": 1,
-            "title": "출근길 타겟 '수제 모닝 샌드위치' 출시",
+            "title": "20대 타겟 '저녁 가성비 실속 세트' 출시",
             "tags": ["#매출증대", "#난이도하", "#상품개발"],
-            "related_swot": ["S1", "O1"],
-            "reason": "수제 빵의 품질(S1)과 풍부한 출근길 유동인구(O1)를 결합하여 아침 시간대 구매를 유도하는 SO 전략이다."
+            "related_swot": ["S", "O"],
+            "reason": "우수한 가격 경쟁력(S)과 저녁 시간대 급증하는 20대 유동인구(O)를 결합하여, 퇴근 및 하교길 청년층의 집객을 유도하는 SO 전략이다."
         },
         {
             "id": 2,
-            "title": "인스타그램 '빵 나오는 시간' 인증 이벤트",
+            "title": "리뷰 작성 시 '저녁 시간 전용' 할인권 증정",
             "tags": ["#인지도제고", "#난이도하", "#마케팅"],
-            "related_swot": ["W1", "O1"],
-            "reason": "홍보 부족(W1)을 해결하기 위해 유동인구(O1)를 대상으로 SNS 참여를 유도하여 온라인 노출을 극대화하는 WO 전략이다."
+            "related_swot": ["W", "O"],
+            "reason": "부족한 리뷰 수(W)를 보완하기 위해 저녁 유동인구(O)를 대상으로 참여형 이벤트를 열어 디지털 신뢰도를 빠르게 확보하는 WO 전략이다."
         },
         {
             "id": 3,
-            "title": "프랜차이즈 대비 '프리미엄 수제 빵' 브랜딩",
+            "title": "지역 내 '최저가 보상제' 및 단골 혜택 강화",
             "tags": ["#신규고객", "#난이도중", "#고객관리"],
-            "related_swot": ["S1", "T1"],
-            "reason": "대형 프랜차이즈(T1)에 맞서 수제 빵의 품질(S1)을 강조하여 장인 정신이 담긴 매장임을 차별화하는 ST 전략이다."
+            "related_swot": ["S", "T"],
+            "reason": "치열한 과포화 시장(T)에서 압도적인 가격 우위(S)를 확실히 각인시켜 경쟁 업체들 사이에서 독보적인 시장 점유율을 지키는 ST 전략이다."
         },
         {
             "id": 4,
-            "title": "인근 지역 커뮤니티 타겟 마케팅 강화",
+            "title": "네이버 플레이스 정보 최적화 및 신뢰 캠페인",
             "tags": ["#바이럴", "#난이도중", "#마케팅"],
-            "related_swot": ["W1", "T1"],
-            "reason": "부족한 홍보(W1)를 보완하고 경쟁사(T1)의 유입 독점을 막기 위해 지역 맘카페 등에 신뢰 기반 마케팅을 펼치는 WT 전략이다."
+            "related_swot": ["W", "T"],
+            "reason": "낮은 디지털 신뢰도(W)를 개선하고 밀집된 경쟁사(T)들 사이에서 선택받기 위해, 매장의 강점을 온라인에 상세히 노출하여 이탈률을 줄이는 WT 전략이다."
         },
         {
             "id": 5,
-            "title": "출근 시간대 '사전 예약 및 픽업' 서비스",
-            "tags": ["#운영효율", "#난이도중", "#시설개선"],
-            "related_swot": ["S1", "O1"],
-            "reason": "빵의 품질(S1)을 아는 바쁜 직장인(O1)을 위해 대기 시간을 줄여 편의성을 제공하는 고도화된 SO 전략이다."
+            "title": "SNS 인증용 '오늘의 가성비 메뉴' 매일 공개",
+            "tags": ["#운영효율", "#난이도중", "#마케팅"],
+            "related_swot": ["S", "O"],
+            "reason": "높은 가성비(S)를 선호하는 20대(O)의 특성에 맞춰 매일 다른 할인 상품을 SNS로 노출하여 신규 고객의 지속적인 유입을 만드는 고도화된 SO 전략이다."
         }
     ]
+
+    formatting_example_input = format_example_for_prompt(example_input)
+    formatting_example_output = format_example_for_prompt(example_output)
     
     # AI 프롬프트
     return ChatPromptTemplate.from_messages([
@@ -65,17 +91,17 @@ def get_candidate_prompt() -> ChatPromptTemplate:
             - #목표 예시: #매출증대, #신규고객, #객단가UP, #인지도제고
             - #난이도 예시: #난이도하, #난이도중, #난이도상
             - #카테고리 예시: #마케팅, #운영, #고객관리, #상품개발, #시설개선
-        4. **근거 제시**: `related_swot`에는 솔루션 도출에 가장 큰 영향을 준 SWOT 항목의 `id`를 배열로 포함하라.
+        4. **근거 제시**: `related_swot`에는 솔루션 도출에 가장 큰 영향을 준 SWOT 항목의 `type`를 배열로 포함하라.
         5. **생성 이유 명시**: `reason` 필드에 해당 SWOT 항목들을 왜 그렇게 조합했는지, 그리고 이 전략이 어떤 기대 효과를 갖는지 2문장 내외로 친절하게 설명하라.
         6. **ID 생성**: Id는 1부터 시작하여 생성되는 후보군의 순서에 따라 **1씩 증가하는 정수(Integer)**로 부여하라. (예: 1, 2, 3...)
         7. **후보군 개수**: 반드시 3개 이상, 5개 이하의 솔루션을 생성하라.
         """),
 
         # Few-shot: Human 예시
-        ("human", f"### 입력된 SWOT 분석 데이터:\n{json.dumps(example_input, ensure_ascii=False)}"),
+        ("human", f"### 입력된 SWOT 분석 데이터:\n{formatting_example_input}"),
         
         # Few-shot: AI 응답 예시
-        ("ai", json.dumps(example_output, ensure_ascii=False)),
+        ("ai", formatting_example_output),
 
         # 실제 요청
         ("human", """

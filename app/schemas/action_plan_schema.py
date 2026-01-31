@@ -1,7 +1,7 @@
 from typing import List
 from pydantic import BaseModel, Field
 
-# [추가] 1단계: 전략 후보 생성을 위한 스키마
+# Candiate Schema
 class CandidateResult(BaseModel):
     id: int = Field(description="후보 전략의 임시 ID")
     title: str = Field(description="전략 후보의 제목")
@@ -18,7 +18,7 @@ class CandidateResult(BaseModel):
 class CandidateResponse(BaseModel):
     candidates: List[CandidateResult] = Field(description="생성된 전략 후보 목록")
 
-# [추가] 2단계: 전략 평가를 위한 스키마
+# Evaluation Schema
 class EvaluationResult(BaseModel):
     id: int = Field(description="평가할 전략의 ID")
     impactScore: int = Field(
@@ -36,7 +36,7 @@ class EvaluationResult(BaseModel):
 class EvaluationResponse(BaseModel):
     evaluations: List[EvaluationResult] = Field(description="각 후보 전략에 대한 평가 결과")
 
-# 3단계
+# FinalSelect Schema
 class SelectionResult(BaseModel):
     id: int = Field(description="전략의 고유 식별 번호")
     title: str = Field(description="최종 확정된 전략 명칭")
@@ -57,7 +57,7 @@ class SelectionResponse(BaseModel):
         description="최종 선정된 전략들의 목록"
     )
 
-# 4단계
+# ActionPlan Schema
 class ActionStep(BaseModel):
     step: int = Field(description="실행 단계 번호 (1, 2, 3)")
     title: str = Field(description="해당 단계의 핵심 목표 또는 제목")
