@@ -31,3 +31,5 @@ action_plan_chain: Runnable = build_structured_chain(
     ActionPlanResponse,
 )
 
+swot_chain: Runnable
+catchphrase_chain: Runnable

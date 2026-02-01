@@ -73,9 +73,9 @@ async def create_action_plan(swot_data: Dict[str, Any], action_plan_callback_url
         payload = CommonResponse(
             result=callback_data
         )
-        # await send_callback(action_plan_callback_url, payload)
+        await send_callback(action_plan_callback_url, payload)
         logger.info("성공 콜백 전송 완료")
-        print(callback_data)
+        
     
     except Exception as e:
         # 에러 발생 시 로그를 남기고 SpringBoot에 알림
@@ -87,7 +87,7 @@ async def create_action_plan(swot_data: Dict[str, Any], action_plan_callback_url
             message="AI 분석 중 오류가 발생했습니다.",
             result={"error_detail": str(e)}
         )
-        # await send_callback(action_plan_callback_url, payload)
+        await send_callback(action_plan_callback_url, payload)
         logger.info("에러 콜백 전송 완료")        
 
 
