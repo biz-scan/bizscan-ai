@@ -10,3 +10,7 @@ class CommonResponse(BaseModel, Generic[T]):
     code: str = "COMMON200_1"
     message: str = "요청이 성공적으로 처리되었습니다."
     result: Optional[T] = None
+
+class CallbackResponse(CommonResponse[T]):
+    request_id: str
+    status: str

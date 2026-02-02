@@ -1,11 +1,11 @@
 from langchain_core.runnables import Runnable
 
 from app.core.llm_client import build_structured_chain, chatOpenAI
-from app.schemas.action_plan_schema import ActionPlanResponse, CandidateResponse, EvaluationResponse, SelectionResponse
+from app.schemas.action_plan_schema import ActionDetailResponse, CandidateResponse, EvaluateResponse, FinalSelectResponse
 from app.core.prompt_templates.candidate_prompt import get_candidate_prompt
-from app.core.prompt_templates.evaluation_prompt import get_evaluation_prompt
+from app.core.prompt_templates.evaluate_prompt import get_evaluate_prompt
 from app.core.prompt_templates.final_select_prompt import get_selection_prompt
-from app.core.prompt_templates.action_plan_prompt import get_action_plan_prompt
+from app.core.prompt_templates.action_detail_prompt import get_action_detail_prompt
 
 candidate_chain: Runnable = build_structured_chain(
     chatOpenAI,
@@ -13,22 +13,22 @@ candidate_chain: Runnable = build_structured_chain(
     CandidateResponse
 )
 
-evaluation_chain: Runnable = build_structured_chain(
+evaluate_chain: Runnable = build_structured_chain(
     chatOpenAI,
-    get_evaluation_prompt(),
-    EvaluationResponse
+    get_evaluate_prompt(),
+    EvaluateResponse
 )
 
-selection_chain: Runnable = build_structured_chain(
+final_select_chain: Runnable = build_structured_chain(
     chatOpenAI,
     get_selection_prompt(),
-    SelectionResponse
+    FinalSelectResponse
 )
 
-action_plan_chain: Runnable = build_structured_chain(
+action_detail_chain: Runnable = build_structured_chain(
     chatOpenAI,
-    get_action_plan_prompt(),
-    ActionPlanResponse,
+    get_action_detail_prompt(),
+    ActionDetailResponse,
 )
 
 swot_chain: Runnable

@@ -1,6 +1,6 @@
 import httpx
-from pydantic import HttpUrl
-from typing import Dict, Any, Optional
+from pydantic import HttpUrl, BaseModel
+from typing import Dict, Any, Optional, Union
 from fastapi import HTTPException
 
 import os
@@ -10,13 +10,13 @@ from app.utils.client_manager import HttpClientManager
 from app.schemas.analysis_schema import SummaryRequest, SummaryResponse
 
 base_url = settings.BASE_URL
-summary_path = os.getenv("SUMMARY_PATH")
+summary_path = settings.SUMMARY_PATH
 
 def test_env():
     print(base_url)
     return base_url
 
-async def send_callback(url: HttpUrl, payload: Dict[str, Any]):
+async def send_callback(url: HttpUrl, payload: Union[BaseModel, Dict[str, Any]]):
     # 싱글톤 클라이언트 가져오기
     client = HttpClientManager.client
     
@@ -25,10 +25,15 @@ async def send_callback(url: HttpUrl, payload: Dict[str, Any]):
         return False
 
     try:
+        if isinstance(payload, BaseModel):
+            data = payload.model_dump(mode="json")
+        else:
+            data = payload
+
         response = await client.post(
             str(url),
-            json=payload,
-            timeout=10.0
+            json=data,
+            timeout=60.0
         )
         response.raise_for_status()
         return True
