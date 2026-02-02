@@ -5,13 +5,13 @@ WORKDIR /app
 # 시스템 패키지 최소
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-# uv 설치
+# uv 설치 (설치 경로: /root/.local/bin)
 RUN curl -Ls https://astral.sh/uv/install.sh | sh
-ENV PATH="/root/.cargo/bin:${PATH}"
+ENV PATH="/root/.local/bin:${PATH}"
 
 # 의존성 설치 (lock/pyproject 기반)
 COPY pyproject.toml uv.lock* ./
-RUN uv sync --frozen || uv sync
+RUN uv sync --frozen
 
 # 앱 복사
 COPY . .
