@@ -4,8 +4,6 @@ from fastapi.responses import JSONResponse, RedirectResponse
 import httpx
 from contextlib import asynccontextmanager
 from app.utils.client_manager import HttpClientManager
-
-from app.core.database import engine, Base
 from app.routers import health_router, analysis_router
 from app.schemas.common_schema import CommonResponse
 

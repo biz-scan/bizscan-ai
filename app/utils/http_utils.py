@@ -4,14 +4,17 @@ from typing import Dict, Any, Optional
 from fastapi import HTTPException
 
 import os
-from dotenv import load_dotenv
-load_dotenv()
+from app.core.env_config import settings
 
 from app.utils.client_manager import HttpClientManager
 from app.schemas.analysis_schema import SummaryRequest, SummaryResponse
 
-base_url = os.getenv("BASE_URL_LOCAL")
+base_url = settings.BASE_URL
 summary_path = os.getenv("SUMMARY_PATH")
+
+def test_env():
+    print(base_url)
+    return base_url
 
 async def send_callback(url: HttpUrl, payload: Dict[str, Any]):
     # 싱글톤 클라이언트 가져오기
