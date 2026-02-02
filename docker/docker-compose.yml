@@ -1,0 +1,16 @@
+services:
+  ai:
+    image: ${DOCKER_USERNAME}/${DOCKER_REPO}:${IMAGE_TAG}
+    container_name: bizscan-ai-${PROFILE:-dev}
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env
+    networks:
+      - bizscan-network
+    restart: unless-stopped
+
+networks:
+  bizscan-network:
+    external: true
+    name: docker_bizscan-network
