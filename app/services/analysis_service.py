@@ -1,5 +1,6 @@
 # swot service + action_plan service
 import re
+from pydantic import HttpUrl
 
 from app.services.swot_service import create_swot
 from app.services.action_plan_service import create_action_plan
@@ -25,10 +26,36 @@ async def run_analysis_flow(request: AnalysisStoreRequest):
         store_info = StoreInfo(**request.model_dump())
         print(summary_result)
 
-        swot_data = await create_swot(store_info, summary_result, request.swot_callback_url)
+        # swot_data = await create_swot(store_info, summary_result, request.swot_callback_url)
         # 임시 데이터
+        swot_data = {
+            "strengths": {
+                "type": "S",
+                "keyword": "직접 로스팅한 고품질 원두",
+                "description": "품질 대비 낮은 가격대 유지",
+                "diagnosis": "자체 로스팅을 통해 원가를 절감하면서도 스페셜티급 품질을 유지하고 있습니다. 이는 저가형 커피 프랜차이즈와 고급 개인 카페 사이에서 독보적인 가성비 포지션을 구축할 수 있는 강력한 자산입니다."
+            },
+            "weaknesses": {
+                "type": "W",
+                "keyword": "협소한 매장 좌석",
+                "description": "평균 체류 시간 20분 내외",
+                "diagnosis": "매장 면적이 좁아 피크 타임 시 홀 이용 고객을 놓치는 경우가 많습니다. 특히 단체 고객 수용이 불가능하여 객단가를 높이는 데 한계가 있으며, 이는 회전율에만 의존해야 하는 수익 구조를 만듭니다."
+            },
+            "opportunities": {
+                "type": "O",
+                "keyword": "인근 직장인 테이크아웃 수요 증가",
+                "description": "오전 8시~10시 매출 비중 40%",
+                "diagnosis": "최근 인근 지식산업센터 입주로 인해 출근 시간대 테이크아웃 수요가 폭발적으로 증가하고 있습니다. 이들의 이동 동선에 맞춘 빠른 서빙 프로세스와 모바일 주문 시스템을 도입한다면 매출 극대화가 가능합니다."
+            },
+            "threats": {
+                "type": "T",
+                "keyword": "대형 프랜차이즈의 공격적 마케팅",
+                "description": "반경 100m 내 브랜드 카페 3곳 신규 진입",
+                "diagnosis": "대형 자본을 앞세운 프랜차이즈 카페들이 1+1 행사나 멤버십 혜택으로 고객을 유인하고 있습니다. 단순한 가격 비교보다는 우리 매장만의 '맛'과 '친밀함'을 강조한 로컬 브랜딩이 뒷받침되지 않으면 고객 이탈 우려가 큽니다."
+            }
+        }
         
-        await create_action_plan(swot_data, request.action_plan_callback_url)
+        await create_action_plan(swot_data=swot_data, action_plan_callback_url=request.action_plan_callback_url, action_detail_callback_url=request.action_detail_callback_url, request_id=request.request_id)
 
     except Exception as e:
         # 백그라운드에서는 raise 대신 로그
@@ -73,29 +100,3 @@ def generate_keyword(address: str, menu: str) -> str:
 
 
 
-# swot_data = {
-#             "strengths": {
-#                 "type": "S",
-#                 "keyword": "직접 로스팅한 고품질 원두",
-#                 "description": "품질 대비 낮은 가격대 유지",
-#                 "diagnosis": "자체 로스팅을 통해 원가를 절감하면서도 스페셜티급 품질을 유지하고 있습니다. 이는 저가형 커피 프랜차이즈와 고급 개인 카페 사이에서 독보적인 가성비 포지션을 구축할 수 있는 강력한 자산입니다."
-#             },
-#             "weaknesses": {
-#                 "type": "W",
-#                 "keyword": "협소한 매장 좌석",
-#                 "description": "평균 체류 시간 20분 내외",
-#                 "diagnosis": "매장 면적이 좁아 피크 타임 시 홀 이용 고객을 놓치는 경우가 많습니다. 특히 단체 고객 수용이 불가능하여 객단가를 높이는 데 한계가 있으며, 이는 회전율에만 의존해야 하는 수익 구조를 만듭니다."
-#             },
-#             "opportunities": {
-#                 "type": "O",
-#                 "keyword": "인근 직장인 테이크아웃 수요 증가",
-#                 "description": "오전 8시~10시 매출 비중 40%",
-#                 "diagnosis": "최근 인근 지식산업센터 입주로 인해 출근 시간대 테이크아웃 수요가 폭발적으로 증가하고 있습니다. 이들의 이동 동선에 맞춘 빠른 서빙 프로세스와 모바일 주문 시스템을 도입한다면 매출 극대화가 가능합니다."
-#             },
-#             "threats": {
-#                 "type": "T",
-#                 "keyword": "대형 프랜차이즈의 공격적 마케팅",
-#                 "description": "반경 100m 내 브랜드 카페 3곳 신규 진입",
-#                 "diagnosis": "대형 자본을 앞세운 프랜차이즈 카페들이 1+1 행사나 멤버십 혜택으로 고객을 유인하고 있습니다. 단순한 가격 비교보다는 우리 매장만의 '맛'과 '친밀함'을 강조한 로컬 브랜딩이 뒷받침되지 않으면 고객 이탈 우려가 큽니다."
-#             }
-#         }

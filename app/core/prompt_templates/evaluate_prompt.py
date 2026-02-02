@@ -4,7 +4,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from app.utils.prompt_formatting import format_example_for_prompt
 
 # 2. 후보 전략 평가 Chain
-def get_evaluation_prompt() -> ChatPromptTemplate:
+def get_evaluate_prompt() -> ChatPromptTemplate:
     # Few-shot Input
     example_swot = {
         "strengths": {
@@ -78,31 +78,31 @@ def get_evaluation_prompt() -> ChatPromptTemplate:
             "id": 1, 
             "impactScore": 9, 
             "effortScore": 3, 
-            "evaluation": "성장세인 20대 유동인구를 타겟으로 강점인 가성비를 극대화하여 즉각적인 매출 상승이 기대되며, 기존 재료를 활용한 세트 구성이라 실행도 간편하다."
+            "evaluate": "성장세인 20대 유동인구를 타겟으로 강점인 가성비를 극대화하여 즉각적인 매출 상승이 기대되며, 기존 재료를 활용한 세트 구성이라 실행도 간편하다."
         },
         {
             "id": 2, 
             "impactScore": 8, 
             "effortScore": 2, 
-            "evaluation": "가장 큰 약점인 리뷰 부족 문제를 저비용 할인권으로 해결하여 디지털 신뢰도를 빠르게 높일 수 있는 가성비 높은 전략이다."
+            "evaluate": "가장 큰 약점인 리뷰 부족 문제를 저비용 할인권으로 해결하여 디지털 신뢰도를 빠르게 높일 수 있는 가성비 높은 전략이다."
         },
         {
             "id": 3, 
             "impactScore": 7, 
             "effortScore": 5, 
-            "evaluation": "과포화 시장에서 확실한 우위를 점할 수 있는 강력한 카드지만, 경쟁사 가격 모니터링과 단골 관리 시스템 구축에 일정 수준의 운영 공수가 필요하다."
+            "evaluate": "과포화 시장에서 확실한 우위를 점할 수 있는 강력한 카드지만, 경쟁사 가격 모니터링과 단골 관리 시스템 구축에 일정 수준의 운영 공수가 필요하다."
         },
         {
             "id": 4, 
             "impactScore": 6, 
             "effortScore": 4, 
-            "evaluation": "장기적인 매장 신뢰도 구축에 필수적이나, 플레이스 정보 최적화와 콘텐츠 제작 등 초기 세팅 및 관리에 시간이 소요되는 측면이 있다."
+            "evaluate": "장기적인 매장 신뢰도 구축에 필수적이나, 플레이스 정보 최적화와 콘텐츠 제작 등 초기 세팅 및 관리에 시간이 소요되는 측면이 있다."
         },
         {
             "id": 5, 
             "impactScore": 7, 
             "effortScore": 6, 
-            "evaluation": "매일 새로운 정보를 제공하여 재방문을 유도하는 효과는 크지만, 담당자가 매일 SNS 콘텐츠를 업로드하고 소통해야 하는 운영 부담이 따른다."
+            "evaluate": "매일 새로운 정보를 제공하여 재방문을 유도하는 효과는 크지만, 담당자가 매일 SNS 콘텐츠를 업로드하고 소통해야 하는 운영 부담이 따른다."
         }
     ]
 
@@ -128,7 +128,7 @@ def get_evaluation_prompt() -> ChatPromptTemplate:
             - Effort 점수는 투입되는 자원(시간, 자금, 인력)의 양을 의미한다. 1점은 사장님 혼자 즉시 할 수 있는 일이며, 10점은 외부 업체 고용이나 큰 자본 투자가 필요한 일이다.
 
         ### 핵심 규칙
-        - `evaluation`은 왜 해당 점수를 부여했는지 전략적 근거를 2문장 내외로 서술하라.
+        - `evaluate`은 왜 해당 점수를 부여했는지 전략적 근거를 2문장 내외로 서술하라.
         - SWOT 분석 결과와 전략의 연관성을 고려하여 평가의 객관성을 유지하라.
         """),
 

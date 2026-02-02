@@ -1,6 +1,7 @@
 from typing import List
 from pydantic import BaseModel, Field, HttpUrl
-from app.schemas.action_plan_schema import ActionPlanResponse
+from app.schemas.action_plan_schema import ActionDetailResponse, FinalSelectResponse
+from app.schemas.swot_schema import SWOTResponse, CatchphraseResponse
 
 # AI 분석 Request DTO의 태그
 class TagInfo(BaseModel):
@@ -26,8 +27,10 @@ class StoreInfo(BaseModel):
 
 # API 요청용 DTO (StoreInfo를 상속받음)
 class AnalysisStoreRequest(StoreInfo):
+    request_id: str
     swot_callback_url: HttpUrl
     action_plan_callback_url: HttpUrl
+    action_detail_callback_url: HttpUrl
 
 # 요약 정보 Request DTO
 class SummaryRequest(BaseModel):
@@ -56,10 +59,13 @@ class SummaryResponse(BaseModel):
 
 # SWOT 분석 결과물 응답 DTO (콜백)
 class SWOTCallbackResponse(BaseModel):    
-    swot: List[str] # 임시
+    catchphrase: CatchphraseResponse
+    swot: SWOTResponse
 
 
 # ActionPlan 결과물 응답 DTO (콜백)
 class ActionPlanCallbackResponse(BaseModel):
-    status: str
-    action_plan: ActionPlanResponse
+    action_plan: ActionDetailResponse
+
+class FinalSelectCallbackResponse(BaseModel):
+    final_select: FinalSelectResponse

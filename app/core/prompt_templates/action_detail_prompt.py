@@ -4,7 +4,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from app.utils.prompt_formatting import format_example_for_prompt
 
 # 4. To-Do List 생성 Chain
-def get_action_plan_prompt() -> ChatPromptTemplate:
+def get_action_detail_prompt() -> ChatPromptTemplate:
     # 1단계: SWOT 데이터
     example_swot = {
         "strengths": {
@@ -63,7 +63,7 @@ def get_action_plan_prompt() -> ChatPromptTemplate:
         {
             "id": 1,
             "title": "20대 타겟 '저녁 가성비 실속 세트' 출시",
-            "action_plan": [
+            "action_detail": [
                 {
                     "step": 1,
                     "title": "청년층 선호 메뉴 조합 및 가격 책정",
@@ -87,7 +87,7 @@ def get_action_plan_prompt() -> ChatPromptTemplate:
         {
             "id": 2,
             "title": "리뷰 작성 시 '저녁 시간 전용' 할인권 증정",
-            "action_plan": [
+            "action_detail": [
                 {
                     "step": 1,
                     "title": "리뷰 이벤트 안내물 및 디지털 할인 쿠폰 제작",
@@ -111,7 +111,7 @@ def get_action_plan_prompt() -> ChatPromptTemplate:
         {
             "id": 3,
             "title": "지역 내 '최저가 보상제' 및 단골 혜택 강화",
-            "action_plan": [
+            "action_detail": [
                 {
                     "step": 1,
                     "title": "주변 상권 가격 모니터링 및 보상 기준 수립",
@@ -145,7 +145,7 @@ def get_action_plan_prompt() -> ChatPromptTemplate:
         사장님이 복잡한 고민 없이 즉시 실행할 수 있도록 3단계의 구체적인 액션 아이템을 도출하라.
 
         ### 목표
-        최종 선정된 각 전략에 대해 **[준비 - 실행 - 고도화]**의 흐름을 가진 3단계 실행 계획(Action Plan)을 수립하라.
+        최종 선정된 각 전략에 대해 **[준비 - 실행 - 고도화]**의 흐름을 가진 3단계 상세 실행 계획(Action Detail)을 수립하라.
 
         ### 작성 규칙
         1. **현실 가능성**: 소상공인의 한정된 인력과 예산으로도 일주일 내에 착수할 수 있는 현실적인 방안이어야 한다.
@@ -156,6 +156,7 @@ def get_action_plan_prompt() -> ChatPromptTemplate:
             - 3단계(확산/관리): 후기 유도, 단골 관리, 데이터 분석 등 지속 가능 단계
         4. **가시적 결과 명시**: 각 단계(`step`)마다 해당 행동을 완료했을 때 사장님이 얻을 수 있는 '기대 결과(`expected_outcome`)'를 한 문장으로 구체적으로 포함하라.
         5. **어조**: 신뢰감을 주는 비즈니스 어투를 사용하되, 실천을 독려하는 긍정적인 뉘앙스를 유지하라.
+        6. **ID 일관성**: 각 실행 계획의 `id`는 입력으로 주어진 '최종 선정 전략'의 `id`와 반드시 동일해야 한다. (예: 입력 전략의 ID가 5라면, 대응하는 실행 계획의 ID도 5여야 함)
         """),
 
         # Few-shot 데이터

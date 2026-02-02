@@ -73,36 +73,36 @@ def get_selection_prompt() -> ChatPromptTemplate:
     ]
 
     # 3단계: 2번 프롬프트에서 생성된 평가 결과 (5개)
-    example_evaluation = [
+    example_evaluate = [
         {
             "id": 1, 
             "impactScore": 9, 
             "effortScore": 3, 
-            "evaluation": "성장세인 20대 유동인구를 타겟으로 강점인 가성비를 극대화하여 즉각적인 매출 상승이 기대되며, 기존 재료를 활용한 세트 구성이라 실행도 간편하다."
+            "evaluate": "성장세인 20대 유동인구를 타겟으로 강점인 가성비를 극대화하여 즉각적인 매출 상승이 기대되며, 기존 재료를 활용한 세트 구성이라 실행도 간편하다."
         },
         {
             "id": 2, 
             "impactScore": 8, 
             "effortScore": 2, 
-            "evaluation": "가장 큰 약점인 리뷰 부족 문제를 저비용 할인권으로 해결하여 디지털 신뢰도를 빠르게 높일 수 있는 가성비 높은 전략이다."
+            "evaluate": "가장 큰 약점인 리뷰 부족 문제를 저비용 할인권으로 해결하여 디지털 신뢰도를 빠르게 높일 수 있는 가성비 높은 전략이다."
         },
         {
             "id": 3, 
             "impactScore": 7, 
             "effortScore": 5, 
-            "evaluation": "과포화 시장에서 확실한 우위를 점할 수 있는 강력한 카드지만, 경쟁사 가격 모니터링과 단골 관리 시스템 구축에 일정 수준의 운영 공수가 필요하다."
+            "evaluate": "과포화 시장에서 확실한 우위를 점할 수 있는 강력한 카드지만, 경쟁사 가격 모니터링과 단골 관리 시스템 구축에 일정 수준의 운영 공수가 필요하다."
         },
         {
             "id": 4, 
             "impactScore": 6, 
             "effortScore": 4, 
-            "evaluation": "장기적인 매장 신뢰도 구축에 필수적이나, 플레이스 정보 최적화와 콘텐츠 제작 등 초기 세팅 및 관리에 시간이 소요되는 측면이 있다."
+            "evaluate": "장기적인 매장 신뢰도 구축에 필수적이나, 플레이스 정보 최적화와 콘텐츠 제작 등 초기 세팅 및 관리에 시간이 소요되는 측면이 있다."
         },
         {
             "id": 5, 
             "impactScore": 7, 
             "effortScore": 6, 
-            "evaluation": "매일 새로운 정보를 제공하여 재방문을 유도하는 효과는 크지만, 담당자가 매일 SNS 콘텐츠를 업로드하고 소통해야 하는 운영 부담이 따른다."
+            "evaluate": "매일 새로운 정보를 제공하여 재방문을 유도하는 효과는 크지만, 담당자가 매일 SNS 콘텐츠를 업로드하고 소통해야 하는 운영 부담이 따른다."
         }
     ]
 
@@ -133,7 +133,7 @@ def get_selection_prompt() -> ChatPromptTemplate:
 
     formatting_example_swot = format_example_for_prompt(example_swot)
     formatting_example_candidates = format_example_for_prompt(example_candidates)
-    formatting_example_evaluation = format_example_for_prompt(example_evaluation)
+    formatting_example_evaluate = format_example_for_prompt(example_evaluate)
     formatting_example_output = format_example_for_prompt(example_output)
     
     # AI 프롬프트
@@ -157,7 +157,7 @@ def get_selection_prompt() -> ChatPromptTemplate:
         3. **기대 효과 명시**: 단순한 예측이 아니라 '매출 상승', '객단가 확보', '운영 효율화' 등 구체적인 비즈니스 이득을 강조하라.
         4. **논리적 구조**:
            - 1. 현재 상태 진단: 데이터 기반의 냉정한 현 상황 요약
-           - 2. 전략적 근거: 왜 이 솔루션이 지금 가장 효율적인지에 대한 분석 (`reason`과 `evaluation` 활용)
+           - 2. 전략적 근거: 왜 이 솔루션이 지금 가장 효율적인지에 대한 분석 (`reason`과 `evaluate` 활용)
            - 3. 최종 결과: 실행을 통해 얻게 될 정량적/정성적 기대 효과
 
         ### 선정 및 핵심 규칙
@@ -171,7 +171,7 @@ def get_selection_prompt() -> ChatPromptTemplate:
         ### 분석 데이터:
         - SWOT 데이터: {formatting_example_swot}
         - 전략 후보군: {formatting_example_candidates}
-        - 평가 결과: {formatting_example_evaluation}
+        - 평가 결과: {formatting_example_evaluate}
 
         위 데이터를 바탕으로 시스템 지침(선정 기준 및 작성 규칙)에 따라 최적의 솔루션을 최대 3개 최종 선정해줘.
         """),
