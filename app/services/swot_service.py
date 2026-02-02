@@ -1,4 +1,4 @@
-from app.core.chains import swot_chain, catchphrase_chain
+# from app.core.chains import swot_chain, catchphrase_chain
 from app.utils.http_utils import send_callback
 
 
