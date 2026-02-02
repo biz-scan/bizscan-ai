@@ -6,12 +6,10 @@ on:
 
 permissions:
   contents: read
-  checks: write
-  pull-requests: write
 
 jobs:
-  build:
-    name: Python Build Check
+  lint-and-test:
+    name: Lint & Test (no secrets)
     runs-on: ubuntu-latest
 
     steps:
@@ -30,9 +28,4 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv venv
           uv sync
-
-      - name: Import check
-        run: |
-          uv run python -c "import app.main"

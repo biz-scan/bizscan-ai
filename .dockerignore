@@ -2,16 +2,16 @@
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 
 .git/
 .github/
 
+.env
+.env.*
+docker/.env
+
 .vscode/
 .idea/
 
-.env
-docker/.env
-docker/.env.*
-docker/*.log
-
-tests/
+tests/__pycache__/

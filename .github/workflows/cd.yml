@@ -62,19 +62,17 @@ jobs:
         env:
           PROFILE: ${{ needs.build.outputs.profile }}
           IMAGE_TAG: ${{ needs.build.outputs.tag }}
-          ENV_FILE: ${{ secrets.ENV_FILE }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
+          ENV_FILE: ${{ secrets.ENV_FILE }}
         run: |
           set -e
 
           mkdir -p docker
 
-          # 멀티라인 ENV_FILE 안전 저장
           printf "%s" "$ENV_FILE" > docker/.env
           echo "" >> docker/.env
 
-          # CD에서 자동 세팅 값 append
           echo "PROFILE=${PROFILE}" >> docker/.env
           echo "IMAGE_TAG=${IMAGE_TAG}" >> docker/.env
           echo "DOCKER_USERNAME=${DOCKER_USERNAME}" >> docker/.env
@@ -82,4 +80,4 @@ jobs:
 
           docker compose -f docker/docker-compose.yml --env-file docker/.env down
           docker compose -f docker/docker-compose.yml --env-file docker/.env pull
-          docker compose -f docker/docker-compose.yml --env-file docker/.env up -d
+          docker compose -f docker/docker-compose.yml --env-file docker/.env up -d --build

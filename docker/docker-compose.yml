@@ -4,18 +4,8 @@ services:
     container_name: bizscan-ai-${PROFILE:-dev}
     ports:
       - "8000:8000"
-    environment:
-      TZ: Asia/Seoul
-
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_NAME: ${DB_NAME}
-
-      BASE_URL: ${BASE_URL}
+    env_file:
+      - ./.env
     networks:
       - bizscan-network
     restart: unless-stopped
