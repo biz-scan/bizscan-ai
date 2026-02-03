@@ -65,6 +65,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
           ENV_FILE: ${{ secrets.ENV_FILE }}
+          REDIS_PASS: ${{ secrets.REDIS_PASS }}
         run: |
           set -e
 
@@ -77,6 +78,7 @@ jobs:
           echo "IMAGE_TAG=${IMAGE_TAG}" >> docker/.env
           echo "DOCKER_USERNAME=${DOCKER_USERNAME}" >> docker/.env
           echo "DOCKER_REPO=${DOCKER_REPO}" >> docker/.env
+          echo "REDIS_PASS=${REDIS_PASS}" >> docker/.env
 
           docker compose -f docker/docker-compose.yml --env-file docker/.env down
           docker compose -f docker/docker-compose.yml --env-file docker/.env pull
