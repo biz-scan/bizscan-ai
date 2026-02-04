@@ -1,13 +1,13 @@
 from typing import List
 from pydantic import BaseModel, Field, HttpUrl
 from app.schemas.action_plan_schema import ActionDetailResponse, FinalSelectResponse
-from app.schemas.swot_schema import SWOTResponse, CatchphraseResponse
+from app.schemas.swot_schema import SWOTResponse
+from app.schemas.catchphrase_schema import CatchphraseResponse
 
 # AI 분석 Request DTO의 태그
 class TagInfo(BaseModel):
-    id: int = Field(description="태그 ID", examples=[10])
-    type: str = Field(description="태그 타입", examples=["MOOD"])
-    name: str = Field(description="태그 이름", examples=["VIEW"])
+    type: str = Field(description="태그 타입", examples=["분위기"])
+    name: str = Field(description="태그 이름", examples=["#뷰맛집"])
 
 # 공통 데이터 모델 (핵심 정보)
 class StoreInfo(BaseModel):
@@ -27,10 +27,29 @@ class StoreInfo(BaseModel):
 
 # API 요청용 DTO (StoreInfo를 상속받음)
 class AnalysisStoreRequest(StoreInfo):
-    request_id: str
-    swot_callback_url: HttpUrl
-    action_plan_callback_url: HttpUrl
-    action_detail_callback_url: HttpUrl
+    request_id: str = Field(
+        alias="requestId", 
+        description="요청 고유 ID", 
+        examples=["550e8400-e29b-41d4-a716-446655440000"]
+    )
+    swot_callback_url: HttpUrl = Field(
+        alias="swotCallbackUrl", 
+        description="SWOT 분석 결과 수신 콜백 URL",
+        examples=["http://localhost:8080/api/analysis/callback/swots"]
+    )
+    action_plan_callback_url: HttpUrl = Field(
+        alias="actionPlanCallbackUrl", 
+        description="ActionPlan 결과 수신 콜백 URL",
+        examples=["http://localhost:8080/api/analysis/callback/action-plans"]
+    )
+    action_detail_callback_url: HttpUrl = Field(
+        alias="actionDetailCallbackUrl", 
+        description="ActionDetail 결과 수신 콜백 URL",
+        examples=["http://localhost:8080/api/analysis/callback/action-details"]
+    )
+
+    class Config:
+        populate_by_name = True
 
 # 요약 정보 Request DTO
 class SummaryRequest(BaseModel):

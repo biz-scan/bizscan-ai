@@ -5,7 +5,7 @@ from app.utils.prompt_formatting import format_example_for_prompt
 
 # 1. 후보 전략 선정 Chain
 def get_candidate_prompt() -> ChatPromptTemplate:
-    # Few-shot Input (베이커리 예시)
+    # Few-shot Input
     example_input = {
         "strengths": {
             "type": "S",

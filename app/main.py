@@ -5,6 +5,7 @@ import httpx
 from contextlib import asynccontextmanager
 from app.utils.client_manager import HttpClientManager
 from app.routers import health_router, analysis_router
+
 from app.schemas.common_schema import CommonResponse
 
 @asynccontextmanager
@@ -38,6 +39,7 @@ app.add_middleware(
 # 라우터 등록
 app.include_router(health_router.router)
 app.include_router(analysis_router.router)
+
 
 # / -> /docs 리다이렉트
 @app.get("/")
