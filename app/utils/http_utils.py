@@ -10,8 +10,8 @@ from app.core.env_config import settings
 from app.utils.client_manager import HttpClientManager
 from app.schemas.analysis_schema import SummaryRequest, SummaryResponse
 
-base_url = settings.BASE_URL
-summary_path = settings.SUMMARY_PATH
+base_url = "http://bizscan-app-dev:8080"
+summary_path = "/api/swot/summary"
 
 def test_env():
     print(base_url)
