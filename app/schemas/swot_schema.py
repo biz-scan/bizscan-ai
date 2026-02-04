@@ -12,10 +12,6 @@ class SWOTResponse(BaseModel):
     weaknesses: SWOTItem
     opportunities: SWOTItem
     threats: SWOTItem
-    
-class CatchphraseResponse(BaseModel):
-    catchphrase: str = Field(
-        description="AI가 생성한 매장 캐치프레이즈"
-    )
+
 
 

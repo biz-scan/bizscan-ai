@@ -98,7 +98,7 @@ async def create_action_plan(swot_data: Dict[str, Any], action_plan_callback_url
             request_id=request_id,
             status="FAILED"
         )
-        await send_callback(action_plan_callback_url, payload)
+        await send_callback(action_detail_callback_url, payload)
         logger.info("에러 콜백 전송 완료")        
 
 

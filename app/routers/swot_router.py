@@ -10,13 +10,13 @@ router = APIRouter(
     tags=["SWOT Analysis"],
 )
 
-@router.post("/swot", response_model=CommonResponse[SwotResponse])
-async def swot_analysis(
-    store_id: int,
-    db: Session = Depends(get_db),
-):
-    """
-    SWOT 요약 + 심층 진단 통합 API
-    """
-    result = generate_swot_analysis(db, store_id)
-    return CommonResponse(result=result)
+# @router.post("/swot", response_model=CommonResponse[SwotResponse])
+# async def swot_analysis(
+#     store_id: int,
+#     db: Session = Depends(get_db),
+# ):
+#     """
+#     SWOT 요약 + 심층 진단 통합 API
+#     """
+#     result = generate_swot_analysis(db, store_id)
+#     return CommonResponse(result=result)

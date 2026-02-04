@@ -1,7 +1,8 @@
 from typing import List
 from pydantic import BaseModel, Field, HttpUrl
 from app.schemas.action_plan_schema import ActionDetailResponse, FinalSelectResponse
-from app.schemas.swot_schema import SWOTResponse, CatchphraseResponse
+from app.schemas.swot_schema import SWOTResponse
+from app.schemas.catchphrase_schema import CatchphraseResponse
 
 # AI 분석 Request DTO의 태그
 class TagInfo(BaseModel):

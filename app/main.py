@@ -1,21 +1,11 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
-<<<<<<< HEAD
 import httpx
 from contextlib import asynccontextmanager
 from app.utils.client_manager import HttpClientManager
 from app.routers import health_router, analysis_router
-=======
 
-from app.core.database import engine, Base
-from app.routers import health_router
-<<<<<<< HEAD
-from app.routers.swot_router import router as swot_router
->>>>>>> feat/#2-swot
-=======
-from app.routers import catchphrase_router
->>>>>>> feat/#3-badge
 from app.schemas.common_schema import CommonResponse
 
 @asynccontextmanager
@@ -48,15 +38,8 @@ app.add_middleware(
 
 # 라우터 등록
 app.include_router(health_router.router)
-<<<<<<< HEAD
-<<<<<<< HEAD
 app.include_router(analysis_router.router)
-=======
-app.include_router(swot_router)
->>>>>>> feat/#2-swot
-=======
-app.include_router(catchphrase_router.router)
->>>>>>> feat/#3-badge
+
 
 # / -> /docs 리다이렉트
 @app.get("/")

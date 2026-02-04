@@ -1,81 +1,95 @@
 import json
 from langchain_core.prompts import ChatPromptTemplate
 
+from app.utils.prompt_formatting import format_example_for_prompt
+
 
 def get_swot_prompt() -> ChatPromptTemplate:
     # =========================
     # Few-shot 예시 (카페)
     # =========================
     example_input = {
-        "category": "카페",
-        "main_menu": "아메리카노",
-        "avg_price": "4,000~5,000원",
-        "mood_tag": "조용한",
-        "target_customer": "20대 직장인",
-        "operation_type": "1인 운영",
-        "pain_point": "단골 고객 부족",
-
-        "main_age_group": "20대",
-        "main_gender": "남성",
-
-        "competitor_count": 25,
-        "competition_level": "HIGH",
-
-        "apartment_ratio": 0.15,
-        "house_ratio": 0.10,
-        "office_ratio": 0.75,
+        "store_info": {
+            "storeId": 1,
+            "name": "문화제빵",
+            "address": "서울 성동구 성수동",
+            "category": "카페/베이커리",
+            "categoryDetail": "베이커리/디저트",
+            "price": "5,000원 내외",
+            "target": "가성비를 중시하는 젊은 층",
+            "painPoint": "온라인 인지도 부족",
+            "signature": "마늘빵",
+            "tags": [{"type": "분위기", "name": "#조용한"}]
+        },
+        "market_data": {
+            "mainAgeGroup": "20대",
+            "mainGender": "여성",
+            "peakTime": "18-21시",
+            "avgDailyPop": 5000,
+            "competitorCount": 150,
+            "competitionLevel": "HIGH",
+            "avgMonthIncome": 2500000,
+            "mainHousingType": "원룸 및 오피스 밀집",
+            "topHashtags": "#마늘빵맛집 #가성비카페",
+            "myReviewCount": 20,
+            "avgCompReviewCount": 100.0,
+            "myRating": 4.5,
+            "myReviewContents": "빵은 맛있는데 찾기가 힘들어요."
+        }
     }
 
     example_output = {
-    "strengths": {
-        "type": "S",
-        "keyword": "가격 경쟁력 우수",
-        "description": "객단가가 주변보다 낮아요",
-        "diagnosis": (
-            "해당 업체는 가격 경쟁력이 우수합니다. "
-            "객단가가 주변보다 낮게 책정되어 있고, "
-            "소비자들에게 높은 가성비를 제공함으로써 "
-            "인근 경쟁 업체 대비 신규 고객 유입 및 시장 점유율 확보에 "
-            "매우 유리한 위치를 점하고 있습니다."
-        )
-    },
-    "weaknesses": {
-        "type": "W",
-        "keyword": "리뷰 수 부족",
-        "description": "경쟁사 대비 20% 수준",
-        "diagnosis": (
-            "현재 온라인상에 축적된 리뷰 수가 경쟁사 대비 20% 수준에 머물러 있어 "
-            "디지털 신뢰도가 매우 낮은 상태입니다. "
-            "이는 가격 경쟁력이라는 확실한 강점이 있음에도 불구하고, "
-            "실제 방문으로 이어지게 하는 사회적 증거가 부족하여 "
-            "잠재 고객을 이탈시키는 주요 원인이 되고 있습니다."
-        )
-    },
-    "opportunities": {
-        "type": "O",
-        "keyword": "20대 유동인구 상승",
-        "description": "저녁 시간대 급증",
-        "diagnosis": (
-            "저녁 시간대를 중심으로 가성비를 중시하는 "
-            "20대 유동인구가 급증하고 있는 점은 "
-            "매출 성장의 강력한 기회 요인입니다. "
-            "활동 패턴에 맞춘 마케팅이나 메뉴 구성을 통해 "
-            "저녁 시간대 점유율을 빠르게 확대할 수 있습니다."
-        )
-    },
-    "threats": {
-        "type": "T",
-        "keyword": "유사 업종 과포화",
-        "description": "반경 500m 내 150개",
-        "diagnosis": (
-            "반경 500m 이내에 150개의 유사 업체가 밀집한 과포화 상태는 "
-            "출혈 경쟁을 야기하는 심각한 위협입니다. "
-            "단순 가격 경쟁만으로는 차별화가 어려워 "
-            "브랜드 인지도를 확보하지 못할 경우 "
-            "시장 내 도태 위험이 큽니다."
-        )
+        "strengths": {
+            "type": "S",
+            "keyword": "가격 경쟁력 우수",
+            "description": "객단가가 주변보다 낮아요",
+            "diagnosis": (
+                "해당 업체는 가격 경쟁력이 우수합니다. "
+                "객단가가 주변보다 낮게 책정되어 있고, "
+                "소비자들에게 높은 가성비를 제공함으로써 "
+                "인근 경쟁 업체 대비 신규 고객 유입 및 시장 점유율 확보에 "
+                "매우 유리한 위치를 점하고 있습니다."
+            )
+        },
+        "weaknesses": {
+            "type": "W",
+            "keyword": "리뷰 수 부족",
+            "description": "경쟁사 대비 20% 수준",
+            "diagnosis": (
+                "현재 온라인상에 축적된 리뷰 수가 경쟁사 대비 20% 수준에 머물러 있어 "
+                "디지털 신뢰도가 매우 낮은 상태입니다. "
+                "이는 가격 경쟁력이라는 확실한 강점이 있음에도 불구하고, "
+                "실제 방문으로 이어지게 하는 사회적 증거가 부족하여 "
+                "잠재 고객을 이탈시키는 주요 원인이 되고 있습니다."
+            )
+        },
+        "opportunities": {
+            "type": "O",
+            "keyword": "20대 유동인구 상승",
+            "description": "저녁 시간대 급증",
+            "diagnosis": (
+                "저녁 시간대를 중심으로 가성비를 중시하는 "
+                "20대 유동인구가 급증하고 있는 점은 "
+                "매출 성장의 강력한 기회 요인입니다. "
+                "활동 패턴에 맞춘 마케팅이나 메뉴 구성을 통해 "
+                "저녁 시간대 점유율을 빠르게 확대할 수 있습니다."
+            )
+        },
+        "threats": {
+            "type": "T",
+            "keyword": "유사 업종 과포화",
+            "description": "반경 500m 내 150개",
+            "diagnosis": (
+                "반경 500m 이내에 150개의 유사 업체가 밀집한 과포화 상태는 "
+                "출혈 경쟁을 야기하는 심각한 위협입니다. "
+                "단순 가격 경쟁만으로는 차별화가 어려워 "
+                "브랜드 인지도를 확보하지 못할 경우 "
+                "시장 내 도태 위험이 큽니다."
+            )
+        }
     }
-}
+    formatting_example_input = format_example_for_prompt(example_input)
+    formatting_example_output = format_example_for_prompt(example_output)
 
     return ChatPromptTemplate.from_messages([
         ("system", """
@@ -185,51 +199,60 @@ def get_swot_prompt() -> ChatPromptTemplate:
         """),
 
     # ---------- Few-shot 입력 ----------
-    ("human", f"""
-    [매장 정보]
-    - 업종: {example_input["category"]}
-    - 대표 메뉴: {example_input["main_menu"]}
-    - 객단가: {example_input["avg_price"]}
-    - 분위기 태그: {example_input["mood_tag"]}
-    - 주요 타겟: {example_input["target_customer"]}
-    - 운영 방식: {example_input["operation_type"]}
-    - 현재 고민: {example_input["pain_point"]}
+    # ("human", f"""
+    # [매장 정보]
+    # - 업종: {example_input["category"]}
+    # - 대표 메뉴: {example_input["main_menu"]}
+    # - 객단가: {example_input["avg_price"]}
+    # - 분위기 태그: {example_input["mood_tag"]}
+    # - 주요 타겟: {example_input["target_customer"]}
+    # - 운영 방식: {example_input["operation_type"]}
+    # - 현재 고민: {example_input["pain_point"]}
 
-    [분석 데이터]
-    - 주요 이용 연령대: {example_input["main_age_group"]}
-    - 주요 이용 성별: {example_input["main_gender"]}
-    - 동종 업계 점포 수: {example_input["competitor_count"]}
-    - 경쟁 강도: {example_input["competition_level"]}
-    - 주거 형태 비율:
-    - 아파트: {example_input["apartment_ratio"]}
-    - 단독주택: {example_input["house_ratio"]}
-    - 오피스: {example_input["office_ratio"]}
-    """),
+    # [분석 데이터]
+    # - 주요 이용 연령대: {example_input["main_age_group"]}
+    # - 주요 이용 성별: {example_input["main_gender"]}
+    # - 동종 업계 점포 수: {example_input["competitor_count"]}
+    # - 경쟁 강도: {example_input["competition_level"]}
+    # - 주거 형태 비율:
+    # - 아파트: {example_input["apartment_ratio"]}
+    # - 단독주택: {example_input["house_ratio"]}
+    # - 오피스: {example_input["office_ratio"]}
+    # """),
+    ("human", json.dumps(formatting_example_input, ensure_ascii=False)),
 
     # ---------- Few-shot 출력 ----------
-    ("ai", json.dumps(example_output, ensure_ascii=False)),
+    ("ai", json.dumps(formatting_example_output, ensure_ascii=False)),
 
     # ---------- 실제 요청 ----------
+    # ("human", """
+    #     [매장 정보]
+    #     - 업종: {category}
+    #     - 대표 메뉴: {main_menu}
+    #     - 객단가: {avg_price}
+    #     - 분위기 태그: {mood_tag}
+    #     - 주요 타겟: {target_customer}
+    #     - 운영 방식: {operation_type}
+    #     - 현재 고민: {pain_point}
+
+    #     [분석 데이터]
+    #     - 주요 이용 연령대: {main_age_group}
+    #     - 주요 이용 성별: {main_gender}
+    #     - 동종 업계 점포 수: {competitor_count}
+    #     - 경쟁 강도: {competition_level}
+    #     - 주거 형태 비율:
+    #         - 아파트: {apartment_ratio}
+    #         - 단독주택: {house_ratio}
+    #         - 오피스: {office_ratio}
+
+    #     위 정보를 바탕으로 SWOT 분석과 심층 진단을 생성하라.
+    #             """),
     ("human", """
-        [매장 정보]
-        - 업종: {category}
-        - 대표 메뉴: {main_menu}
-        - 객단가: {avg_price}
-        - 분위기 태그: {mood_tag}
-        - 주요 타겟: {target_customer}
-        - 운영 방식: {operation_type}
-        - 현재 고민: {pain_point}
+아래 입력 데이터를 바탕으로 SWOT 분석과 심층 진단을 생성하라.
 
-        [분석 데이터]
-        - 주요 이용 연령대: {main_age_group}
-        - 주요 이용 성별: {main_gender}
-        - 동종 업계 점포 수: {competitor_count}
-        - 경쟁 강도: {competition_level}
-        - 주거 형태 비율:
-            - 아파트: {apartment_ratio}
-            - 단독주택: {house_ratio}
-            - 오피스: {office_ratio}
-
-        위 정보를 바탕으로 SWOT 분석과 심층 진단을 생성하라.
-                """),
+{{
+  "store_info": {store_info},
+  "market_data": {market_data}
+}}
+        """),
             ])

@@ -1,3 +1,4 @@
+import json
 import httpx
 from pydantic import HttpUrl, BaseModel
 from typing import Dict, Any, Optional, Union
@@ -29,6 +30,13 @@ async def send_callback(url: HttpUrl, payload: Union[BaseModel, Dict[str, Any]])
             data = payload.model_dump(mode="json")
         else:
             data = payload
+
+        print("\n" + "="*50)
+        print(f"🚀 [Callback 전송 시작] URL: {url}")
+        print("-" * 50)
+        # indent=4로 보기 좋게, ensure_ascii=False로 한글 안 깨지게 출력
+        print(json.dumps(data, indent=4, ensure_ascii=False)) 
+        print("="*50 + "\n")
 
         response = await client.post(
             str(url),
