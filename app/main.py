@@ -41,11 +41,6 @@ app.include_router(health_router.router)
 app.include_router(analysis_router.router)
 
 
-# / -> /docs 리다이렉트
-@app.get("/")
-async def root():
-    return RedirectResponse(url="/docs")
-
 # HTTP 예외 처리 (400, 401, 404 등)
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc: HTTPException):

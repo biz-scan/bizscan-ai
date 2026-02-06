@@ -5,16 +5,17 @@ from pydantic import HttpUrl
 
 from app.core.logger import logger
 from app.schemas.common_schema import CallbackResponse
+from app.schemas.swot_schema import SWOTResponse
 from app.schemas.action_plan_schema import CandidateResponse, EvaluateResponse, FinalSelectResponse, ActionDetailResponse
 from app.schemas.analysis_schema import ActionPlanCallbackResponse, FinalSelectCallbackResponse
 from app.core.chains import action_detail_chain, candidate_chain, evaluate_chain, final_select_chain
 from app.utils.http_utils import send_callback
 
-async def create_action_plan(swot_data: Dict[str, Any], action_plan_callback_url: HttpUrl, action_detail_callback_url: HttpUrl, request_id: str):
+async def create_action_plan(swot_data: SWOTResponse, action_plan_callback_url: HttpUrl, action_detail_callback_url: HttpUrl, fail_callback_url: HttpUrl,request_id: str):
     """
     4단계 체인을 순차적으로 실행하여 최종 실행 계획을 도출합니다.
     """
-    swot_json_str = json.dumps(swot_data, ensure_ascii=False)
+    swot_json_str = swot_data.model_dump_json(ensure_ascii=False)
 
     try:
         # 1단계: 전략 후보 생성
@@ -93,12 +94,11 @@ async def create_action_plan(swot_data: Dict[str, Any], action_plan_callback_url
         payload = CallbackResponse(
             isSuccess=False,
             code="AI_ERROR_500",
-            message="AI 분석 중 오류가 발생했습니다.",
-            result={"error_detail": str(e)},
+            message="실행 전략 생성 중 오류가 발생했습니다.",
             request_id=request_id,
             status="FAILED"
         )
-        await send_callback(action_detail_callback_url, payload)
+        await send_callback(fail_callback_url, payload)
         logger.info("에러 콜백 전송 완료")        
 
 
