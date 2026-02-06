@@ -65,19 +65,22 @@ class SummaryRequest(BaseModel):
 
 # 요약 정보 Response DTO
 class SummaryResponse(BaseModel):
-    mainAgeGroup: str
-    mainGender: str
-    peakTime: str
-    avgDailyPop: int
-    competitorCount: int
-    competitionLevel: str
-    avgMonthIncome: int
-    mainHousingType: str
-    topHashtags: str
-    myReviewCount: int
-    avgCompReviewCount: float
-    myRating: float
-    myReviewContents: str
+    mainAgeGroup: str = Field(description="주요 방문 고객 연령대")
+    mainGender: str = Field(description="주요 방문 고객 성별")
+    peakTime: str = Field(description="매장이 가장 붐비는 시간대")
+    avgDailyPop: int = Field(description="일평균 유동인구 수")
+    competitorCount: int = Field(description="주변 경쟁 업체 수")
+    competitionLevel: str = Field(description="상권 경쟁 강도 (예: 높음, 중간, 낮음)")
+    avgMonthIncome: int = Field(description="상권 내 가구당 평균 월소득")
+    mainHousingType: str = Field(description="상권의 주요 주거 형태 (예: 오피스 밀집, 원룸 등)")
+    topHashtags: str = Field(description="상권을 대표하는 주요 해시태그")
+    myReviewCount: int = Field(description="내 매장의 총 리뷰 수")
+    avgCompReviewCount: float = Field(description="경쟁 업체들의 평균 리뷰 수")
+    myRating: float = Field(description="내 매장의 평균 별점")
+    myReviewContents: str = Field(
+        description="내 매장 방문객들의 실제 리뷰 내용 요약 또는 대표적인 고객 피드백",
+        example="고기가 구워져서 나와서 편해요. 직원들이 친절하지만 웨이팅이 좀 길어요."
+    )
 
 
 
