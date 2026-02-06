@@ -11,7 +11,7 @@ from app.core.logger import logger
 from app.utils.client_manager import HttpClientManager
 from app.schemas.analysis_schema import SummaryRequest, SummaryResponse
 
-base_url = "http://bizscan-app-dev:8080"
+base_url = "http://localhost:8080"
 summary_path = "/api/swot/summary"
 test_base_url = os.getenv("BASE_URL")
 test_summary_path = os.getenv("SUMMARY_PATH")
