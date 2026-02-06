@@ -10,7 +10,7 @@ from app.schemas.analysis_schema import SWOTCallbackResponse, SummaryResponse, S
 from app.core.chains import swot_chain, catchphrase_chain
 from app.utils.http_utils import send_callback
 
-async def create_swot(store_info: StoreInfo, summary_result: SummaryResponse, swot_callback_url: HttpUrl, request_id: str):
+async def create_swot(store_info: StoreInfo, summary_result: SummaryResponse, swot_callback_url: HttpUrl, fail_callback_url: HttpUrl, request_id: str):
     """
     SWOT 분석 및 캐치프레이즈 생성을 수행하고 결과를 콜백으로 전송합니다.
     """
@@ -64,10 +64,9 @@ async def create_swot(store_info: StoreInfo, summary_result: SummaryResponse, sw
             isSuccess=False,
             code="AI_ERROR_500",
             message="SWOT 분석 중 오류가 발생했습니다.",
-            result={"error_detail": str(e)},
             request_id=request_id,
             status="FAILED"
         )
-        await send_callback(swot_callback_url, error_payload)
+        await send_callback(fail_callback_url, error_payload)
 
-    return None
+    return swot_res

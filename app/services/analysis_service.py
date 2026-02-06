@@ -1,18 +1,17 @@
 # swot service + action_plan service
 import re
 from pydantic import HttpUrl
+from app.core.logger import logger
 
 from app.services.swot_service import create_swot
 from app.services.action_plan_service import create_action_plan
-from app.schemas.analysis_schema import AnalysisStoreRequest
-from app.schemas.analysis_schema import SummaryRequest, SummaryResponse, StoreInfo
-from app.utils.http_utils import get_summary_data
+from app.schemas.analysis_schema import AnalysisStoreRequest, SummaryRequest, SummaryResponse, StoreInfo
+from app.schemas.common_schema import CallbackResponse
+from app.utils.http_utils import get_summary_data, send_callback
 
 async def run_analysis_flow(request: AnalysisStoreRequest):
     try:
-        keyword = generate_keyword(request.address, request.signature)
-        # print는 로컬 테스트용 로그
-        print(keyword)
+        keyword = generate_keyword(request.address, request.signature)        
 
         summary_req = SummaryRequest(
             address=request.address,
@@ -21,21 +20,28 @@ async def run_analysis_flow(request: AnalysisStoreRequest):
             keyword=keyword
         )
 
-        # 객체를 인자로 전달
-        summary_result: SummaryResponse = await get_summary_data(summary_req)
+        logger.info("--- 0단계: 공공데이터 전처리 시작 ---")
+        summary_result: SummaryResponse = await get_summary_data(summary_req)        
+        logger.debug(f"데이터 전처리 결과: {summary_result.model_dump_json(indent=4, ensure_ascii=False)}")
         store_info = StoreInfo(**request.model_dump())
-        print(summary_result)
-
-        swot_data = await create_swot(store_info=store_info, summary_result=summary_result, swot_callback_url=request.swot_callback_url, request_id=request.request_id)
         
-        
-        await create_action_plan(swot_data=swot_data, action_plan_callback_url=request.action_plan_callback_url, action_detail_callback_url=request.action_detail_callback_url, request_id=request.request_id)
+        # SWOT 시작
+        swot_data = await create_swot(store_info=store_info, summary_result=summary_result, swot_callback_url=request.swot_callback_url, request_id=request.request_id, fail_callback_url=request.fail_callback_url)
+        # ActionPlan 시작
+        await create_action_plan(swot_data=swot_data, action_plan_callback_url=request.action_plan_callback_url, action_detail_callback_url=request.action_detail_callback_url, request_id=request.request_id, fail_callback_url=request.fail_callback_url)
 
     except Exception as e:
-        # 백그라운드에서는 raise 대신 로그
-        print(f"Background Task Error: {e}")
-    
-
+        # 에러 발생 시 처리
+        logger.error(f"AI 분석 중 오류 발생: {str(e)}", exc_info=True)
+        
+        error_payload = CallbackResponse(
+            isSuccess=False,
+            code="AI_ERROR_500",
+            message="AI 분석 중 오류가 발생했습니다.",
+            request_id=request.request_id,
+            status="FAILED"
+        )
+        await send_callback(request.fail_callback_url, error_payload)
 
 
 

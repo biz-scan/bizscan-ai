@@ -47,6 +47,11 @@ class AnalysisStoreRequest(StoreInfo):
         description="ActionDetail 결과 수신 콜백 URL",
         examples=["http://localhost:8080/api/analysis/callback/action-details"]
     )
+    fail_callback_url: HttpUrl = Field(
+        alias="failCallbackUrl", 
+        description="AI 분석 실패 콜백 URL",
+        examples=["http://localhost:8080/api/analysis/callback/fail"]
+    )
 
     class Config:
         populate_by_name = True
