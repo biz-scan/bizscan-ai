@@ -5,17 +5,17 @@ from typing import Dict, Any, Optional, Union
 from fastapi import HTTPException
 
 import os
-from app.core.env_config import settings
+from dotenv import load_dotenv
+load_dotenv()
 from app.core.logger import logger
 from app.utils.client_manager import HttpClientManager
 from app.schemas.analysis_schema import SummaryRequest, SummaryResponse
 
 base_url = "http://bizscan-app-dev:8080"
 summary_path = "/api/swot/summary"
+test_base_url = os.getenv("BASE_URL")
+test_summary_path = os.getenv("SUMMARY_PATH")
 
-def test_env():
-    print(base_url)
-    return base_url
 
 async def send_callback(url: HttpUrl, payload: Union[BaseModel, Dict[str, Any]]):
     # 싱글톤 클라이언트 가져오기
@@ -54,7 +54,9 @@ async def get_summary_data(
         raise HTTPException(status_code=500, detail="HTTP Client가 초기화되지 않았습니다.")
     
     url = base_url + summary_path
-    print("url: " + url)
+    test_url = test_base_url + test_summary_path
+    logger.info("현재 url: " + url)
+    logger.info("Test URL: " + test_url)
 
     try:
         response = await client.get(
