@@ -33,8 +33,7 @@ def get_catchphrase_prompt() -> ChatPromptTemplate:
             "topHashtags": "#회식 #삼겹살맛집",
             "myReviewCount": 150,
             "avgCompReviewCount": 120.5,
-            "myRating": 4.8,
-            "myReviewContents": "고기가 구워져서 나와서 편해요."
+            "myRating": 4.8,            
         }
     }
 
@@ -67,8 +66,7 @@ def get_catchphrase_prompt() -> ChatPromptTemplate:
             "topHashtags": "#디저트카페 #인생샷",
             "myReviewCount": 300,
             "avgCompReviewCount": 280.0,
-            "myRating": 4.2,
-            "myReviewContents": "사진이 잘 나오고 빵이 맛있어요."
+            "myRating": 4.2,            
         }
     }
 
@@ -112,20 +110,12 @@ def get_catchphrase_prompt() -> ChatPromptTemplate:
         # =========================
         # Few-shot 예시 1
         # =========================
-        # ("human", json.dumps({
-        #     "store_info": example_input_1["store_info"],
-        #     "market_data": example_input_1["market_data"]
-        # }, ensure_ascii=False)),
         ("human", json.dumps(formatting_example_input_1, ensure_ascii=False)),
         ("ai", json.dumps(formatting_example_output_1, ensure_ascii=False)),
 
         # =========================
         # Few-shot 예시 2
         # =========================
-        # ("human", json.dumps({
-        #     "store_info": example_input_2["store_info"],
-        #     "market_data": example_input_2["market_data"]
-        # }, ensure_ascii=False)),
         ("human", json.dumps(formatting_example_input_2, ensure_ascii=False)),
         ("ai", json.dumps(formatting_example_output_2, ensure_ascii=False)),
 

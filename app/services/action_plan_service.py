@@ -18,16 +18,16 @@ async def create_action_plan(swot_data: SWOTResponse, action_plan_callback_url: 
     swot_json_str = swot_data.model_dump_json(ensure_ascii=False)
 
     try:
-        # 1단계: 전략 후보 생성
-        logger.info("--- 1단계: 후보군 생성 시작 ---")
+        # 3단계: 전략 후보 생성
+        logger.info("--- 3단계: 후보군 생성 시작 ---")
         candidates_res: CandidateResponse = await candidate_chain.ainvoke({
             "swot_json": swot_json_str
         })
         logger.debug(f"Candidate Chain 결과: {candidates_res.model_dump_json(indent=4, ensure_ascii=False)}")
         candidates = candidates_res.candidates # List[CandidateResult]
 
-        # 2단계: 후보군 평가
-        logger.info("--- 2단계: 후보군 평가 시작 ---")
+        # 4단계: 후보군 평가
+        logger.info("--- 4단계: 후보군 평가 시작 ---")
         candidate_list_json = json.dumps(
             [c.model_dump() for c in candidates], 
             ensure_ascii=False
@@ -39,8 +39,8 @@ async def create_action_plan(swot_data: SWOTResponse, action_plan_callback_url: 
         logger.debug(f"Evaluation Chain 결과: {evaluate_res.model_dump_json(indent=4, ensure_ascii=False)}")
         evaluations = evaluate_res.evaluations # List[EvaluateResponse]
 
-        # 3단계: 최종 전략 선정
-        logger.info("--- 3단계: 핵심 전략 선정 시작 ---")
+        # 5단계: 최종 전략 선정
+        logger.info("--- 5단계: 핵심 전략 선정 시작 ---")
         evaluated_candidates_json = json.dumps(
             [e.model_dump() for e in evaluations], 
             ensure_ascii=False
@@ -63,8 +63,8 @@ async def create_action_plan(swot_data: SWOTResponse, action_plan_callback_url: 
         logger.info("ActionPlan 콜백 전송 완료")
         
 
-        # 4단계: 실행 계획(To-Do) 수립
-        logger.info("--- 4단계: 실행 계획 수립 시작 ---")
+        # 6단계: 실행 계획(To-Do) 수립
+        logger.info("--- 6단계: 실행 계획 수립 시작 ---")
         final_selected_json = json.dumps(
             [s.model_dump() for s in selections], 
             ensure_ascii=False
