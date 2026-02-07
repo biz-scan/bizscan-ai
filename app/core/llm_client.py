@@ -14,7 +14,7 @@ if not os.getenv("OPENAI_API_KEY"):
 # LLM 인스턴스
 chatOpenAI = ChatOpenAI(
     model="gpt-4o-mini",
-    temperature=0,
+    temperature=0.7,
 )
 
 # Pydantic 구조화 출력 체인
