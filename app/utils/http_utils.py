@@ -23,24 +23,19 @@ async def send_callback(url: HttpUrl, payload: Union[BaseModel, Dict[str, Any]])
     
     if client is None:
         logger.error("--- HTTP Client가 초기화되지 않았습니다. ---")
-        return False
+        raise RuntimeError("HTTP Client not initialized")
 
-    try:
-        if isinstance(payload, BaseModel):
-            data = payload.model_dump(mode="json")
-        else:
-            data = payload
+    # 데이터 직렬화
+    data = payload.model_dump(mode="json") if isinstance(payload, BaseModel) else payload
 
-        response = await client.post(
-            str(url),
-            json=data,
-            timeout=60.0
-        )
-        response.raise_for_status()
-        return True
-    except Exception as e:
-        logger.error(f"--- 콜백 전송 최종 실패: {str(e)} ---")
-        return False
+    # callback 실패 시 service 로직의 fail_callback 수행
+    response = await client.post(
+        str(url),
+        json=data,
+        timeout=60.0
+    )
+    response.raise_for_status()
+    return True
     
 async def get_summary_data(
     req: SummaryRequest
