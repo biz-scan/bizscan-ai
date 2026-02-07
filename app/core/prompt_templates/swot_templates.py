@@ -34,7 +34,7 @@ def get_swot_prompt() -> ChatPromptTemplate:
             "myReviewCount": 20,
             "avgCompReviewCount": 100.0,
             "myRating": 4.5,
-            "myReviewContents": "빵은 맛있는데 찾기가 힘들어요."
+            # "myReviewContents": "빵은 맛있는데 찾기가 힘들어요." (삭제 예정)
         }
     }
 
@@ -119,49 +119,59 @@ def get_swot_prompt() -> ChatPromptTemplate:
         1. Strengths (강점: 내부 요인, 긍정)
         ────────────────
         추론 기준:
-        - 사용자가 입력한 매장 정보(객단가, 타겟, 분위기, 운영 방식 등)를
-        지역 평균 및 경쟁 환경 데이터와 비교하여
+        - 사용자가 입력한 store_info(price, target, tags 등)를
+        market_data와 비교하여
         상대적으로 "우위"에 해당하는 요소를 강점으로 도출한다.
 
         추론 예시:
-        - IF 매장 객단가 < 지역 평균 객단가
+        - IF store_info.price < 지역 평균 객단가
         → keyword: "가격 경쟁력 우수"
-        - IF 주요 타겟과 유동 인구의 연령대가 일치
+        - IF store_info.target과 market_data.mainAgeGroup의 연령대가 일치
         → keyword: "명확한 타겟 고객층"
-        - IF 분위기/운영 방식이 상권 특성과 잘 맞음
-        → keyword: "상권 적합 매장 콘셉트"
+        - IF store_info.tags에 '#단체석' 포함 AND market_data.mainHousingType에 '오피스' 비중 높음 
+          → keyword: "직장인 단체 수요 가능"
+        - IF store_info.signature가 확실하고 market_data.myRating >= 4.0 
+        → keyword: "검증된 상품 경쟁력"
+        - IF store_info.tags나 signature가 market_data.topHashtags와 일치
+        → keyword: "트렌드 적합성 우수"
 
         ────────────────
         2. Weaknesses (약점: 내부 요인, 부정)
         ────────────────
         추론 기준:
-        - 사용자가 입력한 현재 고민(pain_point)을
+        - 사용자가 입력한 store_info.painPoint을
         가장 우선적인 판단 근거로 사용한다.
-        - 경쟁 환경 또는 지역 평균 대비
+        - market_data 대비
         매장이 불리한 내부 요소를 약점으로 도출한다.
 
         추론 예시:
-        - IF pain_point = "단골 고객 부족"
+        - IF store_info.painPoint가 재방문이나 단골 관련 내용임
         → keyword: "재방문율 낮음"
-        - IF 경쟁 점포 수가 많고 차별 요소가 부족함
-        → keyword: "차별화 요소 부족"
-        - IF 특정 시간대 매출이 현저히 낮음
-        → keyword: "시간대 매출 편중"
+        - IF market_data.competitorCount > 100 
+        → keyword: "높은 경쟁 강도"
+        - IF store_info.categoryDetail이 '테이크아웃 전문' BUT market_data.peakTime이 '저녁' 
+        → keyword: "저녁 시간대 매출 약세"
+        - IF market_data.myReviewCount < market_data.avgCompReviewCount
+        → keyword: "온라인 신뢰도 부족"
+        - IF market_data.myRating < 3.5
+        → keyword: "상품/서비스 품질 개선 필요"
 
         ────────────────
         3. Opportunities (기회: 외부 요인, 긍정)
         ────────────────
         추론 기준:
-        - 공공 데이터 기반 시장 환경 변화 중
-        매장 특성과 결합했을 때 시너지가 발생할 수 있는 요소를 도출한다.
+        - market_data의 환경 변화 중
+        store_info의 특성과 결합했을 때 시너지가 발생할 수 있는 요소를 도출한다.
 
         추론 예시:
-        - IF 20대 유동 인구 비율 증가 AND 매장 타겟이 20대
-        → keyword: "젊은 층 유동인구 증가"
-        - IF 특정 시간대 유동 인구 집중
-        → keyword: "시간대 수요 집중"
-        - IF 주거 형태 변화(1인 가구, 오피스 증가)
+        - IF market_data.mainAgeGroup/mainGender가 store_info.target과 부합
+        → keyword: "주요 수요층 집중"
+        - IF market_data.peakTime이 '12-14시'로 집중 
+          → keyword: "직장인 점심 특수"
+        - IF market_data.mainHousingType이 1인 가구 위주이고 매장이 배달/테이크아웃 강점
         → keyword: "특정 수요층 확대"
+        - IF market_data.avgMonthIncome이 높음
+        → keyword: "높은 소비 잠재력"
 
         ────────────────
         4. Threats (위협: 외부 요인, 부정)
@@ -171,12 +181,10 @@ def get_swot_prompt() -> ChatPromptTemplate:
         매장에 직접적인 리스크가 되는 요인을 도출한다.
 
         추론 예시:
-        - IF 반경 내 동종 업계 점포 수 과다
+        - IF market_data.competitorCount > 150
         → keyword: "동종 업계 과포화"
-        - IF 경쟁 강도 = HIGH
-        → keyword: "가격 경쟁 심화"
-        - IF 평균 임대료 상승 또는 상권 경쟁 격화
-        → keyword: "운영 비용 부담 증가"
+        - IF market_data.competitionLevel == 'HIGH'
+        → keyword: "가격 경쟁 심화"        
 
         ────────────────
         [출력 강제 규칙]
@@ -184,7 +192,6 @@ def get_swot_prompt() -> ChatPromptTemplate:
         - keyword는 추론 결과를 요약한 명사형 문구여야 한다.
         - description은 데이터 또는 상황 요약이다.
         - diagnosis는 선택된 추론 근거를 자연어로 풀어 설명한 것이다.
-        - 해결책, 실행 전략, Action Plan은 절대 포함하지 마라.
 
         [출력 강제 규칙]
         - strengths.type = "S"
@@ -198,55 +205,11 @@ def get_swot_prompt() -> ChatPromptTemplate:
         - 반드시 지정된 JSON 형식만 출력하라.
         """),
 
-    # ---------- Few-shot 입력 ----------
-    # ("human", f"""
-    # [매장 정보]
-    # - 업종: {example_input["category"]}
-    # - 대표 메뉴: {example_input["main_menu"]}
-    # - 객단가: {example_input["avg_price"]}
-    # - 분위기 태그: {example_input["mood_tag"]}
-    # - 주요 타겟: {example_input["target_customer"]}
-    # - 운영 방식: {example_input["operation_type"]}
-    # - 현재 고민: {example_input["pain_point"]}
-
-    # [분석 데이터]
-    # - 주요 이용 연령대: {example_input["main_age_group"]}
-    # - 주요 이용 성별: {example_input["main_gender"]}
-    # - 동종 업계 점포 수: {example_input["competitor_count"]}
-    # - 경쟁 강도: {example_input["competition_level"]}
-    # - 주거 형태 비율:
-    # - 아파트: {example_input["apartment_ratio"]}
-    # - 단독주택: {example_input["house_ratio"]}
-    # - 오피스: {example_input["office_ratio"]}
-    # """),
     ("human", json.dumps(formatting_example_input, ensure_ascii=False)),
 
     # ---------- Few-shot 출력 ----------
     ("ai", json.dumps(formatting_example_output, ensure_ascii=False)),
 
-    # ---------- 실제 요청 ----------
-    # ("human", """
-    #     [매장 정보]
-    #     - 업종: {category}
-    #     - 대표 메뉴: {main_menu}
-    #     - 객단가: {avg_price}
-    #     - 분위기 태그: {mood_tag}
-    #     - 주요 타겟: {target_customer}
-    #     - 운영 방식: {operation_type}
-    #     - 현재 고민: {pain_point}
-
-    #     [분석 데이터]
-    #     - 주요 이용 연령대: {main_age_group}
-    #     - 주요 이용 성별: {main_gender}
-    #     - 동종 업계 점포 수: {competitor_count}
-    #     - 경쟁 강도: {competition_level}
-    #     - 주거 형태 비율:
-    #         - 아파트: {apartment_ratio}
-    #         - 단독주택: {house_ratio}
-    #         - 오피스: {office_ratio}
-
-    #     위 정보를 바탕으로 SWOT 분석과 심층 진단을 생성하라.
-    #             """),
     ("human", """
 아래 입력 데이터를 바탕으로 SWOT 분석과 심층 진단을 생성하라.
 
