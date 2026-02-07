@@ -33,8 +33,7 @@ def get_swot_prompt() -> ChatPromptTemplate:
             "topHashtags": "#마늘빵맛집 #가성비카페",
             "myReviewCount": 20,
             "avgCompReviewCount": 100.0,
-            "myRating": 4.5,
-            # "myReviewContents": "빵은 맛있는데 찾기가 힘들어요." (삭제 예정)
+            "myRating": 4.5,            
         }
     }
 

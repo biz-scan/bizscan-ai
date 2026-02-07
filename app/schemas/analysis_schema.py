@@ -77,10 +77,6 @@ class SummaryResponse(BaseModel):
     myReviewCount: int = Field(description="내 매장의 총 리뷰 수")
     avgCompReviewCount: float = Field(description="경쟁 업체들의 평균 리뷰 수")
     myRating: float = Field(description="내 매장의 평균 별점")
-    myReviewContents: str = Field(
-        description="내 매장 방문객들의 실제 리뷰 내용 요약 또는 대표적인 고객 피드백",
-        example="고기가 구워져서 나와서 편해요. 직원들이 친절하지만 웨이팅이 좀 길어요."
-    )
 
 
 
