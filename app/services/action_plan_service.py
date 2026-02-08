@@ -83,6 +83,8 @@ async def create_action_plan(swot_data: SWOTResponse, action_plan_callback_url: 
                 accumulated_titles.append(selection.title)
             current_start_id += 4
 
+        for i, selection in enumerate(all_final_selections, start=1):
+            selection.id = i
         
         # --- 중간 콜백 전송 (선정 결과 알림) ---
         logger.info("--- 모든 전략 선정 완료: ACTION_DETAIL_PROCESSING 콜백 전송 ---")

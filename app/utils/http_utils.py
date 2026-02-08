@@ -27,13 +27,6 @@ def is_retryable_error(exception):
 
 
 
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=2, max=10),
-    retry=retry_if_exception_type((httpx.RequestError, httpx.HTTPStatusError)),
-    retry_error_callback=lambda retry_state: logger.error(f"Callback 최종 실패: {retry_state.outcome.exception()}"),
-    reraise=True # 최종 실패 시 에러를 던져서 서비스 단의 처리를 유지함
-)
 async def send_callback(url: HttpUrl, payload: Union[BaseModel, Dict[str, Any]]):
     # 싱글톤 클라이언트 가져오기
     client = HttpClientManager.client
