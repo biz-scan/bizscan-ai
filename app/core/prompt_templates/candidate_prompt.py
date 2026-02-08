@@ -4,16 +4,11 @@ from langchain_core.prompts import ChatPromptTemplate
 from app.utils.prompt_formatting import format_example_for_prompt
 
 # 1. 후보 전략 선정 Chain
-def get_candidate_prompt(quadrant_type: str) -> ChatPromptTemplate:
-    descriptions = {
-        "SO": "강점(S)을 활용해 기회(O)를 적극적으로 포착하는 전략",
-        "ST": "강점(S)을 활용해 외부의 위협(T)을 효과적으로 회피하거나 극복하는 전략",
-        "WO": "내부의 약점(W)을 보완하여 외부의 기회(O)를 내 것으로 만드는 전략",
-        "WT": "내부의 약점(W)을 보완하고 외부의 위협(T)으로부터 생존하기 위한 방어 전략"
-    }
-    current_guide = descriptions.get(quadrant_type, "교차 분석 전략")
+def get_candidate_prompt() -> ChatPromptTemplate:    
     # Few-shot Input
     example_input = {
+        "quadrant_type": "SO",
+        "current_guide": "내부의 강점(S)을 활용하여 외부의 기회(O)를 적극적으로 포착하는 공격적 전략",
         "factor_1": {
             "type": "S",
             "keyword": "가격 경쟁력 우수",
@@ -29,8 +24,8 @@ def get_candidate_prompt(quadrant_type: str) -> ChatPromptTemplate:
         "previous_strategies": [
             "인근 대학교 제휴 할인 이벤트",
             "네이버 플레이스 지역 광고 집행"
-        ]
-
+        ],
+        "start_id": "5"
     }
 
     # Few-shot Output
@@ -71,20 +66,20 @@ def get_candidate_prompt(quadrant_type: str) -> ChatPromptTemplate:
     # AI 프롬프트
     return ChatPromptTemplate.from_messages([
         ("system", """
-        너는 주어진 SWOT 분석 결과 중 특정 조합({quadrant_type})에 집중하여, 소상공인을 위한 구체적이고 실행 가능한 비즈니스 전략을 제안하는 최고의 데이터 기반 전략 컨설턴트다.
+        너는 주어진 SWOT 분석 결과 중 특정 조합(quadrant_type)에 집중하여, 소상공인을 위한 구체적이고 실행 가능한 비즈니스 전략을 제안하는 최고의 데이터 기반 전략 컨설턴트다.
 
         ### 목표
-        입력된 두 가지 SWOT 요소({quadrant_type})를 결합하여, 사장님이 즉시 실행할 수 있는 후보 솔루션을 4개 생성하라. 
+        입력된 두 가지 SWOT 요소를 결합하여, 사장님이 즉시 실행할 수 있는 후보 솔루션을 4개 생성하라. 
          
         ### 전략 도출 원칙
-        - **{quadrant_type} 전략**: {current_guide}
-        - 반드시 입력된 **내부 요인({quadrant_type[0]})**과 **외부 요인({quadrant_type[1]})**의 접점을 찾아 교차 분석하라.
+        - 사용자가 제공하는 '분석 대상 조합(quadrant_type)'과 '전략 가이드(current_guide)'를 확인하라.
+        - 반드시 입력된 **내부 요인(factor_1)**과 **외부 요인(factor_2)**의 접점을 찾아 교차 분석하라.
         - 각 요소의 `keyword`뿐만 아니라 **`diagnosis`에 담긴 맥락을 깊이 있게 반영**하여 전략을 도출하라.
-        - 현재 집중해야 할 조합은 **{quadrant_type}**이다. 분석 과정에서 다른 요소(예: {quadrant_type}가 아닌 요소)가 섞이지 않도록 엄격히 제한하라.
+        - 지정된 조합(SO, ST, WO, WT 중 하나) 외에 다른 요소가 섞이지 않도록 엄격히 제한하라.
         
          
         ### 중복 방지 규칙
-        - `previous_strategies` 리스트는 이전 루프에서 이미 채택된 전략들의 제목이다.
+        - '이미 선정된 전략(previous_strategies)' 리스트는 이전 루프에서 이미 채택된 전략들의 제목이다.
         - **이 리스트에 포함된 전략과 유사하거나 중복되는 아이디어는 절대 생성하지 마라.**
         - 이미 마케팅 전략이 나왔다면 이번에는 상품 개발이나 운영 효율화 측면으로 접근하는 등, 이전 전략들과 차별화된 새로운 시각을 제시하라.
 
@@ -94,9 +89,9 @@ def get_candidate_prompt(quadrant_type: str) -> ChatPromptTemplate:
             - #목표 예시: #매출증대, #신규고객, #객단가UP, #인지도제고
             - #난이도 예시: #난이도하, #난이도중, #난이도상
             - #카테고리 예시: #마케팅, #운영, #고객관리, #상품개발, #시설개선
-        3. **근거 제시**: `related_swot`에는 ["{quadrant_type[0]}", "{quadrant_type[1]}"]을 배열로 포함하라.
+        3. **근거 제시**: `related_swot`에는 분석에 사용된 요소 타입을 배열로 포함하라. (예: ["S", "O"])
         4. **생성 이유 명시**: `reason` 필드에 해당 조합이 왜 이 전략으로 연결되는지, 그리고 이 전략이 어떤 기대 효과를 갖는지 2문장 내외로 친절하게 설명하라.
-        5. **ID 생성**: Id는 1부터 시작하여 생성되는 후보군의 순서에 따라 **1씩 증가하는 정수(Integer)**로 부여하라. (예: 1, 2, 3...)        
+        5. **ID 생성**: ID는 반드시 **'start_id'**부터 시작하여 생성되는 후보군의 순서에 따라 1씩 증가하는 정수(Integer)로 부여하라. (예: start_id가 5라면 5, 6, 7, 8 부여)
         """),
 
         # Few-shot: Human 예시
@@ -109,9 +104,11 @@ def get_candidate_prompt(quadrant_type: str) -> ChatPromptTemplate:
         ("human", """
         ### 입력 데이터:
         - 분석 대상 조합: {quadrant_type}
-        -- 요소 1({quadrant_type[0]}): {{factor_1}}
-        - 요소 2({quadrant_type[1]}): {{factor_2}}
-        - 이미 선정된 전략: {{previous_strategies}}
+        - 전략 가이드: {current_guide}
+        - 요소 1: {factor_1}
+        - 요소 2: {factor_2}
+        - 이미 선정된 전략: {previous_strategies}
+        - 시작 ID: {start_id}
 
         이제 위 형식에 맞춰 **{quadrant_type}** 조합에 특화된, 중복되지 않는 새로운 후보군 4개를 생성해줘.
         """),
