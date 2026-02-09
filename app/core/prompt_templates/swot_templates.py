@@ -101,7 +101,7 @@ def get_swot_prompt() -> ChatPromptTemplate:
         각 SWOT 항목에 대해 반드시 다음 정보를 포함하라.
         - type: S, W, O, T 중 하나
         - keyword: 핵심 키워드 (짧은 명사형)
-        - description: 해당 키워드에 대한 간단한 상황 설명
+        - description: 해당 키워드에 대한 18자 이내의 간단한 상황 설명
         - diagnosis: 해당 요소가 매장에 미치는 영향을 2~3문장으로 분석
 
         [SWOT 추론 로직 가이드라인]
