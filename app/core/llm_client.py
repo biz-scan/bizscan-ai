@@ -13,7 +13,7 @@ if not os.getenv("OPENAI_API_KEY"):
 
 # LLM 인스턴스
 chatOpenAI = ChatOpenAI(
-    model="gpt-4o-mini",
+    model="gpt-5-mini",
     temperature=0.7,
 )
 
