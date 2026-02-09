@@ -18,13 +18,13 @@ swot_chain: Runnable = build_structured_chain(
     SWOTResponse,
 )
 catchphrase_chain: Runnable = build_structured_chain(
-    chatOpenAI_5,
+    chatOpenAI_4o,
     get_catchphrase_prompt(),
     CatchphraseResponse,
 )
 
 candidate_chain: Runnable = build_structured_chain(
-    chatOpenAI_5,
+    chatOpenAI_4o,
     get_candidate_prompt(),
     CandidateResponse
 )
