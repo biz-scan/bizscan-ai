@@ -1,6 +1,6 @@
 from langchain_core.runnables import Runnable
 
-from app.core.llm_client import build_structured_chain, chatOpenAI_4o
+from app.core.llm_client import build_structured_chain, chatOpenAI_4o, chatOpenAI_5
 from app.schemas.action_plan_schema import ActionDetailResponse, CandidateResponse, EvaluateResponse, FinalSelectResponse
 from app.schemas.catchphrase_schema import CatchphraseResponse
 from app.schemas.swot_schema import SWOTResponse
@@ -12,8 +12,19 @@ from app.core.prompt_templates.action_detail_prompt import get_action_detail_pro
 from app.core.prompt_templates.catchphrase_templates import get_catchphrase_prompt
 from app.core.prompt_templates.swot_templates import get_swot_prompt
 
+swot_chain: Runnable = build_structured_chain(
+    chatOpenAI_5,
+    get_swot_prompt(),
+    SWOTResponse,
+)
+catchphrase_chain: Runnable = build_structured_chain(
+    chatOpenAI_5,
+    get_catchphrase_prompt(),
+    CatchphraseResponse,
+)
+
 candidate_chain: Runnable = build_structured_chain(
-    chatOpenAI_4o,
+    chatOpenAI_5,
     get_candidate_prompt(),
     CandidateResponse
 )
@@ -36,13 +47,3 @@ action_detail_chain: Runnable = build_structured_chain(
     ActionDetailResponse,
 )
 
-swot_chain: Runnable = build_structured_chain(
-    chatOpenAI_4o,
-    get_swot_prompt(),
-    SWOTResponse,
-)
-catchphrase_chain: Runnable = build_structured_chain(
-    chatOpenAI_4o,
-    get_catchphrase_prompt(),
-    CatchphraseResponse,
-)
