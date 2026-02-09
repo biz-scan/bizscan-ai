@@ -12,7 +12,11 @@ if not os.getenv("OPENAI_API_KEY"):
     raise ValueError("OPENAI_API_KEY가 설정되지 않았습니다. .env 파일을 확인하세요.")
 
 # LLM 인스턴스
-chatOpenAI = ChatOpenAI(
+chatOpenAI_4o = ChatOpenAI(
+    model="gpt-4o-mini",
+    temperature=0.3,
+)
+chatOpenAI_5 = ChatOpenAI(
     model="gpt-5-mini",
     temperature=0.7,
 )
