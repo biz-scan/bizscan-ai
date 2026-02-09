@@ -13,7 +13,7 @@ from app.core.prompt_templates.catchphrase_templates import get_catchphrase_prom
 from app.core.prompt_templates.swot_templates import get_swot_prompt
 
 swot_chain: Runnable = build_structured_chain(
-    chatOpenAI_5,
+    chatOpenAI_4o,
     get_swot_prompt(),
     SWOTResponse,
 )
