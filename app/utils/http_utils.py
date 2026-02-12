@@ -27,6 +27,15 @@ def is_retryable_error(exception):
 
 
 
+@retry(
+    stop=stop_after_attempt(3),  # 최대 3번 시도
+    wait=wait_exponential(multiplier=1, min=2, max=6),  # 2s, 4s, 6s 대기
+    retry=retry_if_exception_type(is_retryable_error), # 정의한 에러 조건 발생 시에만 재시도
+    before_sleep=lambda retry_state: logger.warning(
+        f"Callback 재시도 중: {retry_state.attempt_number}회 실패, 다음 시도 대기 중..."
+    ),
+    reraise=True
+)
 async def send_callback(url: HttpUrl, payload: Union[BaseModel, Dict[str, Any]]):
     # 싱글톤 클라이언트 가져오기
     client = HttpClientManager.client
