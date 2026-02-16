@@ -14,6 +14,9 @@ async def create_swot(store_info: StoreInfo, summary_result: SummaryResponse, sw
     """
     SWOT 분석 및 캐치프레이즈 생성을 수행하고 결과를 콜백으로 전송합니다.
     """
+
+    swot_res = None
+    catchphrase_res = None
     
     try:
         # 1. 시작 콜백 전송 (SWOT_PROCESSING)
@@ -56,6 +59,8 @@ async def create_swot(store_info: StoreInfo, summary_result: SummaryResponse, sw
         await send_callback(swot_callback_url, final_payload)
         logger.info("SWOT 및 캐치프레이즈 콜백 전송 성공")
 
+        return swot_res, catchphrase_res
+
     except Exception as e:
         # 에러 발생 시 처리
         logger.error(f"SWOT 분석 중 오류 발생: {str(e)}", exc_info=True)
@@ -69,4 +74,4 @@ async def create_swot(store_info: StoreInfo, summary_result: SummaryResponse, sw
         )
         await send_callback(fail_callback_url, error_payload)
 
-    return swot_res
+    return None, None

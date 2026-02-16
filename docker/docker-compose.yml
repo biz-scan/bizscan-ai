@@ -6,9 +6,26 @@ services:
       - "8000:8000"
     env_file:
       - ./.env
+    environment:
+      - QDRANT_HOST=bizscan-qdrant #로컬 : localhost
+      - QDRANT_PORT=6333
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     networks:
       - bizscan-network
     restart: unless-stopped
+    depends_on:
+      - qdrant
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: bizscan-qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - ./qdrant_storage:/qdrant/storage
+    networks:
+      - bizscan-network
+    restart: unless-stopped  
 
 networks:
   bizscan-network:
