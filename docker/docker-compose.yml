@@ -14,7 +14,7 @@ services:
       - bizscan-network
     restart: unless-stopped
     depends_on:
-      bizscan-qdrant      
+      - bizscan-qdrant      
 
   qdrant:
     image: qdrant/qdrant:latest
