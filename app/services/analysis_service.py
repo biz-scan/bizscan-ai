@@ -8,6 +8,8 @@ from app.services.action_plan_service import create_action_plan
 from app.schemas.analysis_schema import AnalysisStoreRequest, SummaryRequest, SummaryResponse, StoreInfo
 from app.schemas.common_schema import CallbackResponse
 from app.utils.http_utils import get_summary_data, send_callback
+from app.services.vector_service import vector_service
+from app.schemas.vector_schema import StoreSwotIngestRequest, SwotItem
 
 async def run_analysis_flow(request: AnalysisStoreRequest):
     try:
@@ -26,7 +28,65 @@ async def run_analysis_flow(request: AnalysisStoreRequest):
         store_info = StoreInfo(**request.model_dump())
         
         # SWOT 시작
-        swot_data = await create_swot(store_info=store_info, summary_result=summary_result, swot_callback_url=request.swot_callback_url, request_id=request.request_id, fail_callback_url=request.fail_callback_url)
+        swot_data, catchphrase_data = await create_swot(
+            store_info=store_info, 
+            summary_result=summary_result, 
+            swot_callback_url=request.swot_callback_url, 
+            request_id=request.request_id, 
+            fail_callback_url=request.fail_callback_url
+        )
+
+        try:
+            logger.info(f"--- [Store ID: {request.store_id}] 벡터 데이터 적재 시작 ---")
+            
+            # 1. Pydantic 객체를 dict로 변환
+            swot_dict = swot_data.model_dump()
+            
+            # 2. 명세서 기반 타이틀 매핑
+            title_map = {
+                "strengths": "S (강점)",
+                "weaknesses": "W (약점)",
+                "opportunities": "O (기회)",
+                "threats": "T (위협)"
+            }
+
+            ingest_items = []
+            for key, display_title in title_map.items():
+                item = swot_dict.get(key)
+                if item:
+                    current_formatted_text = (
+                        f"분류: {display_title}\n"
+                        f"키워드: {item['keyword']}\n"
+                        f"상세 내용: {item['description']}\n"
+                        f"AI 진단: {item.get('diagnosis', '')}"
+                    )
+                    
+                    ingest_items.append(SwotItem(
+                        type=display_title,
+                        keyword=item["keyword"],
+                        description=item["description"],
+                        diagnosis=item.get("diagnosis", ""),
+                        rawText=current_formatted_text 
+                    ))
+
+            # 3. 벡터 서비스 호출
+            if ingest_items:
+                current_catchphrase = catchphrase_data.catchphrase if catchphrase_data else "가게 분석 정보"
+
+                await vector_service.ingest_store_swot(
+                    StoreSwotIngestRequest(
+                        storeId=request.store_id,
+                        catchphrase=current_catchphrase,
+                        items=ingest_items
+                    )
+                )
+                logger.info(f"--- [Catchphrase: {current_catchphrase}] 벡터 데이터 적재 완료 ---")
+            else:
+                logger.warning("적재할 SWOT 데이터가 없습니다.")
+
+        except Exception as ve:
+            logger.error(f"벡터 적재 중 오류 발생 (무시하고 진행): {str(ve)}")
+
         # ActionPlan 시작
         await create_action_plan(swot_data=swot_data, action_plan_callback_url=request.action_plan_callback_url, action_detail_callback_url=request.action_detail_callback_url, request_id=request.request_id, fail_callback_url=request.fail_callback_url)
 
