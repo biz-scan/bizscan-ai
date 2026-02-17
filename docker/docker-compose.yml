@@ -14,8 +14,7 @@ services:
       - bizscan-network
     restart: unless-stopped
     depends_on:
-      qdrant:
-        condition: service_healthy
+      bizscan-qdrant      
 
   qdrant:
     image: qdrant/qdrant:latest
@@ -27,11 +26,7 @@ services:
     networks:
       - bizscan-network
     restart: unless-stopped  
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    
 
 networks:
   bizscan-network:
