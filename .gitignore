@@ -12,3 +12,6 @@ wheels/
 # Environment
 .env
 .env.*
+
+# Vector
+docker/qdrant_data/
