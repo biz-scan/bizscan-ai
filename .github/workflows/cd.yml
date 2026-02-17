@@ -57,10 +57,10 @@ jobs:
 
     steps:
       - name: Fix permissions for checkout
-          run: |
-            if [ -d "${{ github.workspace }}" ]; then
-              sudo chown -R $USER:$USER ${{ github.workspace }}
-            fi
+        run: |
+          if [ -d "${{ github.workspace }}" ]; then
+            sudo chown -R $USER:$USER ${{ github.workspace }}
+          fi
 
       - uses: actions/checkout@v4
 
