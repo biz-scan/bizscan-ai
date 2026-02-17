@@ -10,7 +10,7 @@ load_dotenv()
 
 class VectorService:
     def __init__(self):
-        self.qdrant_host = os.getenv("QDRANT_HOST", "qdrant")
+        self.qdrant_host = os.getenv("QDRANT_HOST", "bizscan-qdrant")
         self.qdrant_port = int(os.getenv("QDRANT_PORT", 6333))
         self.api_key = os.getenv("OPENAI_API_KEY")
         self.collection_name = "bizscan_store_profile"
