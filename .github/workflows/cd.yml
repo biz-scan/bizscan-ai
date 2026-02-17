@@ -56,6 +56,12 @@ jobs:
     needs: build
 
     steps:
+      - name: Fix permissions for checkout
+          run: |
+            if [ -d "${{ github.workspace }}" ]; then
+              sudo chown -R $USER:$USER ${{ github.workspace }}
+            fi
+
       - uses: actions/checkout@v4
 
       - name: Deploy with Docker Compose
@@ -79,6 +85,8 @@ jobs:
           echo "DOCKER_USERNAME=${DOCKER_USERNAME}" >> docker/.env
           echo "DOCKER_REPO=${DOCKER_REPO}" >> docker/.env
           echo "REDIS_PASS=${REDIS_PASS}" >> docker/.env
+
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
           docker compose -f docker/docker-compose.yml --env-file docker/.env down
           docker compose -f docker/docker-compose.yml --env-file docker/.env pull
