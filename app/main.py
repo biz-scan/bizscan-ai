@@ -19,6 +19,7 @@ async def lifespan(app: FastAPI):
     await HttpClientManager.stop()
 
 
+
 # FastAPI 앱 생성
 app = FastAPI(
     title="Bizscan AI API",
