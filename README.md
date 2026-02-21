@@ -67,8 +67,9 @@
 <br><br>
 
 ## System Architecture
-<img width="1000" alt="image" src="https://github.com/user-attachments/assets/bdef3c90-bb3d-4aec-b9d4-b1deef440436" />
+<img width="1010" height="795" alt="최종 인프라 구성도" src="https://github.com/user-attachments/assets/4df198b9-569b-4434-a568-39998af9eeec" />
 <br><br>
+
 
 ## ERD
 <img width="1000" alt="image" src="https://github.com/user-attachments/assets/dfc8b9bc-5618-41fa-866d-395519d2cfe2" />
