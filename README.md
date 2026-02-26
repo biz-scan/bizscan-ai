@@ -67,7 +67,7 @@
 <br><br>
 
 ## System Architecture
-<img width="1010" height="795" alt="최종 인프라 구성도" src="https://github.com/user-attachments/assets/4df198b9-569b-4434-a568-39998af9eeec" />
+<img width="1010" height="795" alt="최최종 인프라 구성도" src="https://github.com/user-attachments/assets/60fe8559-561e-4c85-ad7b-4aa0c491d97c" />
 <br><br>
 
 
